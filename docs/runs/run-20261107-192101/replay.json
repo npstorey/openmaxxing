@@ -1,0 +1,173 @@
+{
+  "name": "run-20261107-192101",
+  "question": "What were the five most common 311 complaint types in New York City in October 2026, and how many of each?",
+  "answer": "**Top 5 311 complaint types in New York City for October 2026**\n\n| Rank | Complaint Type | Number of Requests |\n|------|----------------|-------------------|\n| 1 | Illegal Parking | 59,708 |\n| 2 | Noise – Residential | 35,425 |\n| 3 | HEAT/HOT WATER | 26,454 |\n| 4 | Blocked Driveway | 17,440 |\n| 5 | Noise – Street/Sidewalk | 16,813 |\n\n*Data source:* NYC 311 Service Requests (dataset `erm2-nwe9`), filtered to `created_date` ≥ 2026‑10‑01 and < 2026‑11‑01, aggregated by `complaint_type` and ordered by count descending.",
+  "model": "gpt-oss-120b",
+  "servedModels": [
+    "gpt-oss-120b"
+  ],
+  "portal": "https://data.cityofnewyork.us",
+  "versions": {
+    "tinfoil": "1.4.0",
+    "router": "0.6.0",
+    "harness": "0.11.0",
+    "socrata": "0.9.2"
+  },
+  "envelopeHash": "9c0c624b66f3fa534f46449309b15aa3a9f1150284dce898bdfbc092911de1eb",
+  "signer": "did:key:z6MkgpBekmFNk5qJFxXkLXxhpfHxtsRxwzRsXEurpkpXYxv9",
+  "verifyLink": "https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-192101.bundle.json",
+  "files": {
+    "answer": "runs/run-20261107-192101/answer.md",
+    "verification": "runs/run-20261107-192101/verification.json",
+    "systemPrompt": "runs/run-20261107-192101/system-prompt.md",
+    "bundle": "bundles/run-20261107-192101.bundle.json"
+  },
+  "events": [
+    {
+      "t": 161,
+      "step": "source",
+      "status": "connected",
+      "server": "pkg:npm/socrata-mcp-server@0.9.2",
+      "portal": "https://data.cityofnewyork.us"
+    },
+    {
+      "t": 165,
+      "step": "router",
+      "tools": [
+        "socrata__get_data",
+        "socrata__search",
+        "socrata__fetch"
+      ],
+      "promptChars": 27889,
+      "promptHash": "107ad4b3a502a95f30ce6dd8c2404071fe96fd453d0a7a32328ce1e458fa95ac"
+    },
+    {
+      "t": 8419,
+      "step": "attestation",
+      "securityVerified": true,
+      "configRepo": "tinfoilsh/confidential-model-router",
+      "enclaveHost": "router-0.tinfoil.sh",
+      "releaseDigest": "95e49018369d59594468ed5af698631ba011937d3859fcbad21207eb0b0f9007",
+      "releaseTag": "v0.0.171",
+      "document": {
+        "schemaVersion": 1,
+        "configRepo": "tinfoilsh/confidential-model-router",
+        "enclaveHost": "router-0.tinfoil.sh",
+        "releaseTag": "v0.0.171",
+        "releaseDigest": "95e49018369d59594468ed5af698631ba011937d3859fcbad21207eb0b0f9007",
+        "codeMeasurement": {
+          "type": "https://tinfoil.sh/predicate/snp-tdx-multiplatform/v1",
+          "registers": [
+            "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438"
+          ]
+        },
+        "enclaveMeasurement": {
+          "measurement": {
+            "type": "https://tinfoil.sh/predicate/sev-snp-guest/v2",
+            "registers": [
+              "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438"
+            ]
+          },
+          "tlsPublicKeyFingerprint": "ebf43329625ba002112dd549048d6370649e0afee20de3d44c88cc322c1d2992",
+          "hpkePublicKey": "7beeb5342fdbae8df8b0105f518e344da21e4742a1d978d3d21cea51c037bd65"
+        },
+        "tlsPublicKey": "ebf43329625ba002112dd549048d6370649e0afee20de3d44c88cc322c1d2992",
+        "hpkePublicKey": "7beeb5342fdbae8df8b0105f518e344da21e4742a1d978d3d21cea51c037bd65",
+        "codeFingerprint": "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438",
+        "enclaveFingerprint": "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438",
+        "selectedRouterEndpoint": "router-0.tinfoil.sh",
+        "securityVerified": true,
+        "verifier": {
+          "name": "@tinfoilsh/verifier",
+          "version": "1.4.0"
+        },
+        "verifiedAt": "2026-11-07T19:21:09.757Z",
+        "steps": {
+          "fetchDigest": {
+            "status": "success"
+          },
+          "verifyCode": {
+            "status": "success"
+          },
+          "verifyEnclave": {
+            "status": "success"
+          },
+          "compareMeasurements": {
+            "status": "success"
+          },
+          "verifyCertificate": {
+            "status": "success"
+          }
+        }
+      }
+    },
+    {
+      "t": 8420,
+      "step": "model",
+      "status": "request",
+      "index": 0
+    },
+    {
+      "t": 12979,
+      "step": "tool",
+      "status": "call",
+      "name": "socrata__get_data",
+      "upstream": "get_data",
+      "args": {
+        "type": "query",
+        "dataset_id": "erm2-nwe9",
+        "limit": 1,
+        "select": "*"
+      }
+    },
+    {
+      "t": 15974,
+      "step": "tool",
+      "status": "result",
+      "name": "socrata__get_data",
+      "bytes": 1791,
+      "ms": 2995
+    },
+    {
+      "t": 15974,
+      "step": "model",
+      "status": "request",
+      "index": 1
+    },
+    {
+      "t": 17605,
+      "step": "tool",
+      "status": "call",
+      "name": "socrata__get_data",
+      "upstream": "get_data",
+      "args": {
+        "type": "query",
+        "dataset_id": "erm2-nwe9",
+        "select": "complaint_type, COUNT(*) AS count",
+        "where": "created_date >= '2026-10-01T00:00:00' AND created_date < '2026-11-01T00:00:00'",
+        "group": "complaint_type",
+        "order": "count DESC",
+        "limit": 5
+      }
+    },
+    {
+      "t": 18710,
+      "step": "tool",
+      "status": "result",
+      "name": "socrata__get_data",
+      "bytes": 532,
+      "ms": 1104
+    },
+    {
+      "t": 18710,
+      "step": "model",
+      "status": "request",
+      "index": 2
+    },
+    {
+      "t": 20488,
+      "step": "answer",
+      "chars": 520
+    }
+  ]
+}

@@ -4,7 +4,7 @@ One question goes in. An analysis of open data comes out as a signed record that
 
 It is a worked example of [Civic AI Tools](https://github.com/npstorey/civic-ai-tools): one local command, a demo page, and a public record host on GitHub Pages.
 
-**The recorded run:** "What were the five most reported crime types in Chicago in October 2026, and how many of each?" [Verify the signed record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-185729.bundle.json) · [Watch it replay](https://openmaxxing.typedstandards.org/) · [`records/run-20261107-185729.signed.json`](records/run-20261107-185729.signed.json)
+**The recorded run:** "What were the five most common 311 complaint types in New York City in October 2026, and how many of each?" [Verify the signed record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-192101.bundle.json) · [Watch it replay](https://openmaxxing.typedstandards.org/) · [`records/run-20261107-192101.signed.json`](records/run-20261107-192101.signed.json). An earlier record asks the same of Chicago's portal: [verify it](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-185729.bundle.json).
 
 ## The eight layers
 
@@ -15,7 +15,7 @@ It is a worked example of [Civic AI Tools](https://github.com/npstorey/civic-ai-
 | 3 | Open routers | The **source router**, [`@typedstandards/civic-typed-router`](https://www.npmjs.com/package/@typedstandards/civic-typed-router) 0.6.0, hands back the tools, the prompt and the dispatch map, and makes no calls itself. The **model router**, Tinfoil's [confidential model router](https://github.com/tinfoilsh/confidential-model-router), is `inference.tinfoil.sh`: it runs in its own enclave, verifies each model enclave, and forwards the request encrypted to that enclave's attested key | MIT; [open source](https://github.com/tinfoilsh/confidential-model-router) |
 | 4 | Open-weight model | [`gpt-oss-120b`](https://huggingface.co/openai/gpt-oss-120b), named in every request and in the record | Apache-2.0 weights |
 | 5 | Open inference | [Tinfoil](https://docs.tinfoil.sh/introduction.md): the model runs in a hardware enclave, and the [`tinfoil`](https://www.npmjs.com/package/tinfoil) SDK verifies the enclave by attestation before it sends anything | SDK Apache-2.0; Tinfoil states that all its security-critical code is open source |
-| 6 | Open data | A Socrata portal, through [`socrata-mcp-server`](https://www.npmjs.com/package/socrata-mcp-server) 0.9.2 over stdio. Default portal: `https://data.cityofchicago.org` | MIT; the portal's own terms |
+| 6 | Open data | A Socrata portal, through [`socrata-mcp-server`](https://www.npmjs.com/package/socrata-mcp-server) 0.9.2 over stdio. Default portal: `https://data.cityofnewyork.us`, set in `openmaxxing.config.json` | MIT; the portal's own terms |
 | 7 | Open record | A signed record served from this repository's GitHub Pages site, under its own `did:key` and key registry, checkable at [typedstandards.org/verify](https://typedstandards.org/verify) | Anyone can verify |
 | 8 | Open standard | The [Typed Standards Specification v0.1](https://github.com/npstorey/civic-ai-tools/blob/main/docs/architecture/typed-standards-specification.md) | CC BY 4.0 |
 
@@ -46,7 +46,7 @@ The diagram is [`docs/dataflow.bpmn`](docs/dataflow.bpmn), BPMN 2.0. The demo pa
 
 ```sh
 git clone https://github.com/npstorey/openmaxxing && cd openmaxxing && npm ci
-op run --env-file=op.env -- npm run ask -- "How many burglaries were reported in Chicago in October 2026?"
+op run --env-file=op.env -- npm run ask -- "What were the five most common 311 complaint types in New York City in October 2026, and how many of each?"
 npm run verify
 ```
 

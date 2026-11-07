@@ -1,8 +1,9 @@
 {
   "$comment": "Openmaxxing's own configuration. Every identity-bearing value the harness needs is stated here; none is the reference deployment's.",
-  "portal": "https://data.cityofchicago.org",
+  "portal": "https://data.cityofnewyork.us",
   "model": "gpt-oss-120b",
   "inferenceHost": "inference.tinfoil.sh",
+  "modelRouterRepo": "tinfoilsh/confidential-model-router",
   "maxIterations": 8,
   "maxToolResultChars": 12000,
   "origin": "https://openmaxxing.typedstandards.org",

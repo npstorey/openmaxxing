@@ -21,8 +21,8 @@ function sha256Hex(bytes) {
 }
 
 /** Write a file under docs/runs/<name>/ and return a BlobRef to its served URL. */
-function servedFile(config, name, file, text, contentType) {
-  const dir = path.join(ROOT, 'docs', 'runs', name);
+function servedFile(config, name, file, text, contentType, outRoot = ROOT, origin = config.origin) {
+  const dir = path.join(outRoot, 'docs', 'runs', name);
   mkdirSync(dir, { recursive: true });
   const bytes = Buffer.from(text, 'utf8');
   writeFileSync(path.join(dir, file), bytes);
@@ -30,7 +30,7 @@ function servedFile(config, name, file, text, contentType) {
     path: path.join(dir, file),
     ref: {
       ref: `blob:sha256:${sha256Hex(bytes)}`,
-      url: `${config.origin}/runs/${name}/${file}`,
+      url: `${origin}/runs/${name}/${file}`,
       contentType,
       size: bytes.length,
     },
@@ -59,19 +59,22 @@ function cli(args) {
  *   records/<name>.input.json           the envelope input
  *   records/<name>.signed.json          what the CLI's sign printed
  */
-export function writeRecord(run, config, name = runName(new Date(run.startedAt))) {
+export function writeRecord(run, config, name = runName(new Date(run.startedAt)), options = {}) {
+  const { outRoot = ROOT, origin = config.origin, updateHost = true, producer } = options;
   const now = new Date().toISOString();
   const packageId = randomUUID();
 
-  const answer = servedFile(config, name, 'answer.md', run.answer.endsWith('\n') ? run.answer : `${run.answer}\n`, 'text/markdown');
+  const answer = servedFile(config, name, 'answer.md', run.answer.endsWith('\n') ? run.answer : `${run.answer}\n`, 'text/markdown', outRoot, origin);
   const verification = servedFile(
     config,
     name,
     'verification.json',
     `${JSON.stringify(run.verificationDocument, null, 2)}\n`,
     'application/json',
+    outRoot,
+    origin,
   );
-  const prompt = servedFile(config, name, 'system-prompt.md', run.systemPrompt, 'text/markdown');
+  const prompt = servedFile(config, name, 'system-prompt.md', run.systemPrompt, 'text/markdown', outRoot, origin);
 
   const registry = {
     socrata: {
@@ -135,6 +138,7 @@ export function writeRecord(run, config, name = runName(new Date(run.startedAt))
       transport: 'stdio',
       portal: run.socrata.portal,
     },
+    ...(producer ? { producer } : {}),
   };
 
   const datHere = deriveDatHereEnvelopeFields(
@@ -180,9 +184,9 @@ export function writeRecord(run, config, name = runName(new Date(run.startedAt))
     extensions: datHere.extensions,
   };
 
-  mkdirSync(path.join(ROOT, 'records'), { recursive: true });
-  const inputPath = path.join(ROOT, 'records', `${name}.input.json`);
-  const signedPath = path.join(ROOT, 'records', `${name}.signed.json`);
+  mkdirSync(path.join(outRoot, 'records'), { recursive: true });
+  const inputPath = path.join(outRoot, 'records', `${name}.input.json`);
+  const signedPath = path.join(outRoot, 'records', `${name}.signed.json`);
   writeFileSync(inputPath, `${JSON.stringify(input, null, 2)}\n`);
 
   const signed = cli(['sign', '--input', inputPath, '--output-file', answer.path]);
@@ -203,7 +207,7 @@ export function writeRecord(run, config, name = runName(new Date(run.startedAt))
     if (served !== file.ref.ref) throw new Error(`${file.path} does not match its signed hash`);
   }
 
-  addToHost(name, signedPath, run.question);
+  if (updateHost) addToHost(name, signedPath, run.question);
   return { name, inputPath, signedPath, files: [answer.path, verification.path, prompt.path], verify: JSON.parse(verified.stdout) };
 }
 

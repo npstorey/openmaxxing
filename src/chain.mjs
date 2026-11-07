@@ -94,7 +94,13 @@ export async function runChain(question, config, emit = () => {}) {
 
     // Layers 3b, 4 and 5: Tinfoil verifies the model router's enclave before
     // anything is sent. The router verifies the model enclave in turn.
-    const client = new TinfoilAI({ apiKey: process.env.TINFOIL_API_KEY });
+    // Pinned to the model router's own host and repository: the record names the
+    // enclave the SDK verified, and a container's egress allowlist stays two hosts.
+    const client = new TinfoilAI({
+      apiKey: process.env.TINFOIL_API_KEY,
+      enclaveURL: `https://${config.inferenceHost}`,
+      configRepo: config.modelRouterRepo,
+    });
     await client.ready();
     const verificationDocument = await client.getVerificationDocument();
     emit({
