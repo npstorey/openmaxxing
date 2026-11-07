@@ -39,15 +39,15 @@
     <bpmn:startEvent id="start_question" name="Question">
       <bpmn:outgoing>f1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="task_compose" name="Compose tools and prompt">
+    <bpmn:serviceTask id="task_compose" name="Compose tools&#10;and prompt">
       <bpmn:incoming>f1</bpmn:incoming>
       <bpmn:outgoing>f2</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="task_attest" name="Attest the router enclave">
+    <bpmn:serviceTask id="task_attest" name="Attest the&#10;router enclave">
       <bpmn:incoming>f2</bpmn:incoming>
       <bpmn:outgoing>f3</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="task_forward" name="Verify model enclave, forward">
+    <bpmn:serviceTask id="task_forward" name="Verify model enclave,&#10;forward">
       <bpmn:incoming>f3</bpmn:incoming>
       <bpmn:incoming>f8</bpmn:incoming>
       <bpmn:outgoing>f4</bpmn:outgoing>
@@ -61,7 +61,7 @@
       <bpmn:outgoing>f6</bpmn:outgoing>
       <bpmn:outgoing>f9</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="task_resolve" name="Resolve called name">
+    <bpmn:serviceTask id="task_resolve" name="Resolve&#10;called name">
       <bpmn:incoming>f6</bpmn:incoming>
       <bpmn:outgoing>f7</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -69,15 +69,15 @@
       <bpmn:incoming>f7</bpmn:incoming>
       <bpmn:outgoing>f8</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:scriptTask id="task_record" name="Derive fields, sign, check">
+    <bpmn:scriptTask id="task_record" name="Derive fields,&#10;sign, check">
       <bpmn:incoming>f9</bpmn:incoming>
       <bpmn:outgoing>f10</bpmn:outgoing>
     </bpmn:scriptTask>
-    <bpmn:sendTask id="task_publish" name="Serve on GitHub Pages">
+    <bpmn:sendTask id="task_publish" name="Serve on&#10;GitHub Pages">
       <bpmn:incoming>f10</bpmn:incoming>
       <bpmn:outgoing>f11</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:userTask id="task_verify" name="Anyone verifies it">
+    <bpmn:userTask id="task_verify" name="Anyone&#10;verifies it">
       <bpmn:incoming>f11</bpmn:incoming>
       <bpmn:outgoing>f12</bpmn:outgoing>
     </bpmn:userTask>
@@ -157,7 +157,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="end_record_di" bpmnElement="end_record">
         <dc:Bounds x="1822" y="642" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1806" y="685" width="70" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel><dc:Bounds x="1805" y="614" width="70" height="14" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
         <di:waypoint x="98" y="78" /><di:waypoint x="98" y="180" /><di:waypoint x="150" y="180" />

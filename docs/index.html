@@ -458,15 +458,17 @@ footer { font-size: 13px; color: var(--muted); }
     viewer = new BpmnJS({
       container: '#canvas',
       bpmnRenderer: { defaultFillColor: css('--diagram-fill'), defaultStrokeColor: css('--diagram-stroke'), defaultLabelColor: css('--ink') },
-      textRenderer: { defaultStyle: { fontFamily: 'Source Sans 3, Segoe UI, Arial, sans-serif', fontSize: 15 } },
+      textRenderer: { defaultStyle: { fontFamily: '"Source Sans 3", "Segoe UI", Arial, sans-serif', fontSize: 15 } },
     });
+    // bpmn-js wraps labels by measuring text; measure with the page's face, not a fallback.
+    try { await document.fonts.load('15px "Source Sans 3"'); await document.fonts.ready; } catch { /* fallback face */ }
     const xml = await fetch('dataflow.bpmn').then((r) => r.text());
     await viewer.importXML(xml);
     // The pool is 1900 x 720; the margin keeps the bpmn.io mark clear of the end event.
     const fit = () => {
       const canvas = viewer.get('canvas');
       canvas.zoom('fit-viewport', 'auto');
-      canvas.zoom(canvas.viewbox().scale * 0.96, 'auto');
+      canvas.zoom(canvas.viewbox().scale * 0.93, 'auto');
     };
     fit();
     addEventListener('resize', fit);
