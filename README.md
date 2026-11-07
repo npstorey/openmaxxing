@@ -42,6 +42,7 @@ The same chain also runs inside a [Tinfoil Container](https://docs.tinfoil.sh/co
 - **The measured config.** [`npstorey/openmaxxing-enclave`](https://github.com/npstorey/openmaxxing-enclave) pins that image by digest, release `v0.0.1`. Its source here is [`enclave/tinfoil-config.yml`](enclave/tinfoil-config.yml). Egress is an allowlist of three hosts: `atc.tinfoil.sh`, `inference.tinfoil.sh` and `data.cityofnewyork.us`.
 - **The signing key.** `attested-keys: record-signing` (Ed25519) is generated inside the enclave on each deploy and never leaves it. Its public key is published in the enclave's attestation (`crypto_material`, format `https://tinfoil.sh/key/spki/v1`).
 - **The client.** `op run --env-file=op.env -- npm run ask:enclave -- "<question>"` verifies the container's enclave with Tinfoil's SecureClient before it sends anything. It then calls `/ask` with a bearer token, so only the operator can spend the inference credits. It runs `tinfoil attestation verify -j` and checks that the record's signing key is the attested key: the recorded run printed `key binding: ok`.
+- **The site, served from the enclave.** From release `v0.0.3`, a second instance serves the demo page itself at https://web.openmaxxing.containers.tinfoil.dev. A visitor's question runs inside the enclave and is signed by that instance's key. The record is then served from the enclave under `/live`, so typedstandards.org verifies it from there. Public questions are capped at 30 per instance and three per visitor every ten minutes. Records made there live in memory and are gone on restart.
 - **Where the records live.** host-core 0.1.3 serves one key per registry, so records signed in the enclave have their own host at [`/enclave`](https://openmaxxing.typedstandards.org/enclave/records.json). Each run also serves the container's attestation (`container-attestation.json`) and the SecureClient's verification document (`container-verification.json`) beside the record, under [`docs/enclave/runs/`](docs/enclave/runs/).
 
 ## Prerequisites
@@ -78,6 +79,9 @@ Before the second command, copy [`op.env.example`](op.env.example) to `op.env` (
 To publish, set `origin` in `host.json` and `openmaxxing.config.json` to your Pages URL, turn on Pages with "GitHub Actions" as the source, then commit the run's files and push. [`publish.yml`](.github/workflows/publish.yml) builds, verifies and deploys; it holds no key and reads no secret.
 
 ### The demo page
+
+Add `#demo` to the address, or press **Present**, to walk through the run one beat at a time: Next and Prev, or the arrow keys, Space and Page Up/Down, which is what a presentation clicker sends. Escape leaves.
+
 
 ```sh
 npm run serve                                # replay only: no keys in the environment
