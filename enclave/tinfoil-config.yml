@@ -2,7 +2,7 @@
 # tinfoil-config.yml in the public config repository npstorey/openmaxxing-enclave;
 # Tinfoil measures that copy and publishes the measurement.
 # For updates: edit, commit to the config repository, then run Tinfoil Release.
-cvm-version: 0.14.7
+cvm-version: "0.14.17"
 cpus: 2
 memory: 4096
 
@@ -24,7 +24,7 @@ networks:
 
 containers:
   - name: openmaxxing
-    image: "ghcr.io/npstorey/openmaxxing@sha256:IMAGE_DIGEST"
+    image: "ghcr.io/npstorey/openmaxxing@sha256:ac9a1dd0c451c5f5f1dc8318e70accb000af635da84511e72792f6b9ea1c5450"
     env:
       - OPENMAXXING_ENCLAVE_REPO: "npstorey/openmaxxing-enclave"
     secrets:
