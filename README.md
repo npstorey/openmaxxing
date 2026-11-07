@@ -4,7 +4,7 @@
 
 One question in. One signed record out. Every layer open.
 
-**[Live demo](https://openmaxxing.typedstandards.org/#demo) · Video: link added when the recording is posted · [Verify the record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-192101.bundle.json)**
+**[Live demo](https://openmaxxing.typedstandards.org/#demo) · [Video, 67 s](docs/openmaxxing.mp4) · [Verify the record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-192101.bundle.json)**
 
 [![The demo page: the question, the answer with its two verify buttons, and the 8/8 open stat card](docs/screenshot.png)](https://openmaxxing.typedstandards.org/)
 
