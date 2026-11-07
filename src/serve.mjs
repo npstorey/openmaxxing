@@ -8,7 +8,7 @@ import http from 'node:http';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { ROOT, loadConfig, packageVersion } from './config.mjs';
-import { runChain } from './chain.mjs';
+import { runChain, tinfoilClient } from './chain.mjs';
 import { runName, writeRecord } from './record.mjs';
 import { writeReplay } from './replay.mjs';
 
@@ -100,6 +100,13 @@ const server = http.createServer(async (req, res) => {
   createReadStream(file).pipe(res);
   return undefined;
 });
+
+if (hasKeys) {
+  tinfoilClient(config).then(
+    ({ verificationDocument }) => console.log(`model router attested in advance: verified=${verificationDocument.securityVerified}`),
+    (error) => console.error(`advance attestation failed; the first run will retry: ${error.message}`),
+  );
+}
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`Openmaxxing demo: http://localhost:${PORT}/  (${hasKeys ? 'live mode' : 'replay only: no keys in the environment'})`);

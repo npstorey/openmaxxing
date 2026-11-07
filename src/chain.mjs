@@ -10,6 +10,30 @@ import { packageVersion } from './config.mjs';
 
 const SELECTION = ['socrata'];
 
+// One verified client per process. The SDK attests the model router when the client
+// is first made ready (about 8 s); a long-running server (npm run serve, the enclave)
+// warms it at startup, and each run's record carries the document from that check.
+let warmClient = null;
+export function tinfoilClient(config) {
+  if (!warmClient) {
+    warmClient = (async () => {
+      // Pinned to the model router's own host and repository: the record names the
+      // enclave the SDK verified, and a container's egress allowlist stays two hosts.
+      const client = new TinfoilAI({
+        apiKey: process.env.TINFOIL_API_KEY,
+        enclaveURL: `https://${config.inferenceHost}`,
+        configRepo: config.modelRouterRepo,
+      });
+      await client.ready();
+      return { client, verificationDocument: await client.getVerificationDocument() };
+    })().catch((error) => {
+      warmClient = null;
+      throw error;
+    });
+  }
+  return warmClient;
+}
+
 function today() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -94,15 +118,7 @@ export async function runChain(question, config, emit = () => {}) {
 
     // Layers 3b, 4 and 5: Tinfoil verifies the model router's enclave before
     // anything is sent. The router verifies the model enclave in turn.
-    // Pinned to the model router's own host and repository: the record names the
-    // enclave the SDK verified, and a container's egress allowlist stays two hosts.
-    const client = new TinfoilAI({
-      apiKey: process.env.TINFOIL_API_KEY,
-      enclaveURL: `https://${config.inferenceHost}`,
-      configRepo: config.modelRouterRepo,
-    });
-    await client.ready();
-    const verificationDocument = await client.getVerificationDocument();
+    const { client, verificationDocument } = await tinfoilClient(config);
     emit({
       step: 'attestation',
       securityVerified: verificationDocument.securityVerified,

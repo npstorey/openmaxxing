@@ -140,6 +140,7 @@ footer { font-size: 13px; color: var(--muted); }
     <button id="play" class="primary">Play</button>
     <button id="step">Step</button>
     <button id="restart">Restart</button>
+    <button id="speed" aria-pressed="false">2× speed</button>
     <span class="status" id="status"></span>
   </div>
 
@@ -382,7 +383,7 @@ footer { font-size: 13px; color: var(--muted); }
     if (timer) return stop();
     if (index >= frames.length - 1) restart();
     $('play').textContent = 'Pause';
-    timer = setInterval(() => { if (index >= frames.length - 1) return stop(); show(index + 1); }, 1300);
+    timer = setInterval(() => { if (index >= frames.length - 1) return stop(); show(index + 1); }, pace);
   }
   function restart() {
     stop();
@@ -395,6 +396,14 @@ footer { font-size: 13px; color: var(--muted); }
     renderLayers([]);
     $('status').textContent = frames.length ? `${frames.length} steps` : '';
   }
+  let pace = 1300;
+  $('speed').addEventListener('click', () => {
+    const fast = pace === 1300;
+    pace = fast ? 650 : 1300;
+    $('speed').setAttribute('aria-pressed', String(fast));
+    $('speed').textContent = fast ? '1× speed' : '2× speed';
+    if (timer) { clearInterval(timer); timer = null; play(); }
+  });
   $('play').addEventListener('click', play);
   $('step').addEventListener('click', () => { stop(); if (index < frames.length - 1) show(index + 1); });
   $('restart').addEventListener('click', restart);
