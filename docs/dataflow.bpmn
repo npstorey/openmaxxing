@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The dataflow of one run of npm run ask, as BPMN 2.0. One pool, one lane per open layer that acts in the run. -->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="openmaxxing-dataflow"
+                  targetNamespace="https://github.com/openmaxxing/openmaxxing">
+  <bpmn:collaboration id="collaboration">
+    <bpmn:participant id="pool" name="One run of npm run ask" processRef="run" />
+  </bpmn:collaboration>
+  <bpmn:process id="run" isExecutable="false">
+    <bpmn:laneSet id="lanes">
+      <bpmn:lane id="lane_app" name="Openmaxxing">
+        <bpmn:flowNodeRef>start_question</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_attest</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_record</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_source_router" name="Source router">
+        <bpmn:flowNodeRef>task_compose</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_resolve</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_model_router" name="Model router">
+        <bpmn:flowNodeRef>task_forward</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_model" name="Model enclave">
+        <bpmn:flowNodeRef>task_model</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>gw_tool</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_data" name="Open data">
+        <bpmn:flowNodeRef>task_query</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_record" name="Open record">
+        <bpmn:flowNodeRef>task_publish</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_verify</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_record</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="start_question" name="Question">
+      <bpmn:outgoing>f1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="task_compose" name="Compose tools and prompt">
+      <bpmn:incoming>f1</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="task_attest" name="Attest the router enclave">
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="task_forward" name="Verify model enclave, forward">
+      <bpmn:incoming>f3</bpmn:incoming>
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:outgoing>f4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="task_model" name="gpt-oss-120b turn">
+      <bpmn:incoming>f4</bpmn:incoming>
+      <bpmn:outgoing>f5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="gw_tool" name="Tool call?">
+      <bpmn:incoming>f5</bpmn:incoming>
+      <bpmn:outgoing>f6</bpmn:outgoing>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="task_resolve" name="Resolve called name">
+      <bpmn:incoming>f6</bpmn:incoming>
+      <bpmn:outgoing>f7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="task_query" name="Query the portal">
+      <bpmn:incoming>f7</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="task_record" name="Derive fields, sign, check">
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sendTask id="task_publish" name="Serve on GitHub Pages">
+      <bpmn:incoming>f10</bpmn:incoming>
+      <bpmn:outgoing>f11</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="task_verify" name="Anyone verifies it">
+      <bpmn:incoming>f11</bpmn:incoming>
+      <bpmn:outgoing>f12</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="end_record" name="Signed record">
+      <bpmn:incoming>f12</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f1" sourceRef="start_question" targetRef="task_compose" />
+    <bpmn:sequenceFlow id="f2" sourceRef="task_compose" targetRef="task_attest" />
+    <bpmn:sequenceFlow id="f3" sourceRef="task_attest" targetRef="task_forward" />
+    <bpmn:sequenceFlow id="f4" sourceRef="task_forward" targetRef="task_model" />
+    <bpmn:sequenceFlow id="f5" sourceRef="task_model" targetRef="gw_tool" />
+    <bpmn:sequenceFlow id="f6" name="yes" sourceRef="gw_tool" targetRef="task_resolve" />
+    <bpmn:sequenceFlow id="f7" sourceRef="task_resolve" targetRef="task_query" />
+    <bpmn:sequenceFlow id="f8" name="rows back to the model" sourceRef="task_query" targetRef="task_forward" />
+    <bpmn:sequenceFlow id="f9" name="no: answer" sourceRef="gw_tool" targetRef="task_record" />
+    <bpmn:sequenceFlow id="f10" sourceRef="task_record" targetRef="task_publish" />
+    <bpmn:sequenceFlow id="f11" sourceRef="task_publish" targetRef="task_verify" />
+    <bpmn:sequenceFlow id="f12" sourceRef="task_verify" targetRef="end_record" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="diagram">
+    <bpmndi:BPMNPlane id="plane" bpmnElement="collaboration">
+      <bpmndi:BPMNShape id="pool_di" bpmnElement="pool" isHorizontal="true">
+        <dc:Bounds x="0" y="0" width="1900" height="720" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_app_di" bpmnElement="lane_app" isHorizontal="true">
+        <dc:Bounds x="30" y="0" width="1870" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_source_router_di" bpmnElement="lane_source_router" isHorizontal="true">
+        <dc:Bounds x="30" y="120" width="1870" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_model_router_di" bpmnElement="lane_model_router" isHorizontal="true">
+        <dc:Bounds x="30" y="240" width="1870" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_model_di" bpmnElement="lane_model" isHorizontal="true">
+        <dc:Bounds x="30" y="360" width="1870" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_data_di" bpmnElement="lane_data" isHorizontal="true">
+        <dc:Bounds x="30" y="480" width="1870" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_record_di" bpmnElement="lane_record" isHorizontal="true">
+        <dc:Bounds x="30" y="600" width="1870" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="start_question_di" bpmnElement="start_question">
+        <dc:Bounds x="80" y="42" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="70" y="18" width="56" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_compose_di" bpmnElement="task_compose">
+        <dc:Bounds x="150" y="145" width="160" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_attest_di" bpmnElement="task_attest">
+        <dc:Bounds x="340" y="25" width="160" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_forward_di" bpmnElement="task_forward">
+        <dc:Bounds x="530" y="265" width="160" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_model_di" bpmnElement="task_model">
+        <dc:Bounds x="720" y="385" width="160" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="gw_tool_di" bpmnElement="gw_tool" isMarkerVisible="true">
+        <dc:Bounds x="915" y="395" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="880" y="452" width="60" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_resolve_di" bpmnElement="task_resolve">
+        <dc:Bounds x="1010" y="145" width="160" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_query_di" bpmnElement="task_query">
+        <dc:Bounds x="1010" y="505" width="160" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_record_di" bpmnElement="task_record">
+        <dc:Bounds x="1220" y="25" width="160" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_publish_di" bpmnElement="task_publish">
+        <dc:Bounds x="1420" y="625" width="160" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_verify_di" bpmnElement="task_verify">
+        <dc:Bounds x="1620" y="625" width="160" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_record_di" bpmnElement="end_record">
+        <dc:Bounds x="1822" y="642" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1806" y="685" width="70" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f1_di" bpmnElement="f1">
+        <di:waypoint x="98" y="78" /><di:waypoint x="98" y="180" /><di:waypoint x="150" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="230" y="145" /><di:waypoint x="230" y="60" /><di:waypoint x="340" y="60" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f3_di" bpmnElement="f3">
+        <di:waypoint x="420" y="95" /><di:waypoint x="420" y="300" /><di:waypoint x="530" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f4_di" bpmnElement="f4">
+        <di:waypoint x="690" y="300" /><di:waypoint x="800" y="300" /><di:waypoint x="800" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f5_di" bpmnElement="f5">
+        <di:waypoint x="880" y="420" /><di:waypoint x="915" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f6_di" bpmnElement="f6">
+        <di:waypoint x="965" y="420" /><di:waypoint x="1050" y="420" /><di:waypoint x="1050" y="215" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1058" y="390" width="24" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f7_di" bpmnElement="f7">
+        <di:waypoint x="1170" y="180" /><di:waypoint x="1200" y="180" /><di:waypoint x="1200" y="540" /><di:waypoint x="1170" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="1010" y="540" /><di:waypoint x="610" y="540" /><di:waypoint x="610" y="335" />
+        <bpmndi:BPMNLabel><dc:Bounds x="700" y="546" width="140" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="940" y="395" /><di:waypoint x="940" y="60" /><di:waypoint x="1220" y="60" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1040" y="40" width="70" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1380" y="60" /><di:waypoint x="1500" y="60" /><di:waypoint x="1500" y="625" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f11_di" bpmnElement="f11">
+        <di:waypoint x="1580" y="660" /><di:waypoint x="1620" y="660" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f12_di" bpmnElement="f12">
+        <di:waypoint x="1780" y="660" /><di:waypoint x="1822" y="660" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

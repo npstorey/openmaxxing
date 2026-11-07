@@ -103,6 +103,8 @@ export async function runChain(question, config, emit = () => {}) {
       configRepo: verificationDocument.configRepo,
       enclaveHost: verificationDocument.enclaveHost,
       releaseDigest: verificationDocument.releaseDigest,
+      releaseTag: verificationDocument.releaseTag,
+      document: verificationDocument,
     });
     if (!verificationDocument.securityVerified) {
       throw new Error('Tinfoil verification did not pass; nothing was sent');

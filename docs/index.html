@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Openmaxxing</title>
+<meta name="description" content="One question in, one signed record out. Every layer of the chain is open.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bpmn-js@18.31.0/dist/assets/diagram-js.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bpmn-js@18.31.0/dist/assets/bpmn-js.css">
+<style>
+/* Layout: a bench. The diagram spans the top; beneath it, the step log, the eight layers and the enclave's evidence sit side by side; the answer and its verify link close the page. */
+:root {
+  --paper: #f3f6f7;
+  --panel: #ffffff;
+  --ink: #102030;
+  --muted: #566878;
+  --rule: #d3dde3;
+  --accent: #0a6b8f;
+  --accent-soft: #dcEEF5;
+  --ok: #1d7a4c;
+  --ok-soft: #dff2e7;
+  --warn: #9a5b00;
+  --diagram-stroke: #2b3d4f;
+  --diagram-fill: #ffffff;
+  --lane-label: #566878;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0d1720; --panel: #132230; --ink: #e4edf2; --muted: #93a6b5; --rule: #24384a;
+    --accent: #5cc2e6; --accent-soft: #123447; --ok: #5fd39a; --ok-soft: #143326; --warn: #f0b45a;
+    --diagram-stroke: #b9cad6; --diagram-fill: #132230; --lane-label: #93a6b5;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0d1720; --panel: #132230; --ink: #e4edf2; --muted: #93a6b5; --rule: #24384a;
+  --accent: #5cc2e6; --accent-soft: #123447; --ok: #5fd39a; --ok-soft: #143326; --warn: #f0b45a;
+  --diagram-stroke: #b9cad6; --diagram-fill: #132230; --lane-label: #93a6b5;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper); color: var(--ink);
+  font: 16px/1.5 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+}
+.wrap { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.wrap > * { min-width: 0; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
+h1 { font: 700 clamp(28px, 4vw, 44px)/1.05 var(--font-display); letter-spacing: -0.01em; margin: 0; }
+h1 small { display: block; font: 500 clamp(15px, 1.6vw, 19px)/1.3 var(--font-display); color: var(--muted); letter-spacing: 0; margin-top: 6px; }
+h2 { font: 600 12px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 10px; }
+a { color: var(--accent); }
+.mode { font: 500 13px/1 var(--font-mono); padding: 7px 10px; border: 1px solid var(--rule); border-radius: 999px; background: var(--panel); white-space: nowrap; }
+.mode[data-live="true"] { border-color: var(--ok); color: var(--ok); }
+.question { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; }
+.question .q { flex: 1 1 320px; min-width: 0; font: 500 clamp(17px, 2vw, 22px)/1.3 var(--font-display); text-wrap: balance; }
+.question input { flex: 1 1 320px; min-width: 0; font: 500 18px/1.3 var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); }
+button { font: 600 14px/1 var(--font-body); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+button[disabled] { opacity: 0.5; cursor: default; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.controls .status { font: 13px/1.3 var(--font-mono); color: var(--muted); margin-left: auto; min-width: 0; }
+.diagram { position: relative; background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+#canvas { width: 100%; aspect-ratio: 2.55; max-height: 78vh; }
+.diagram .bjs-powered-by { opacity: 0.5; }
+.djs-container .djs-visual > :is(rect, circle, polygon, path) { transition: fill 200ms, stroke 200ms; }
+.djs-element.lit .djs-visual > :is(rect, circle, polygon) { stroke: var(--accent) !important; stroke-width: 3px !important; fill: var(--accent-soft) !important; }
+.djs-element.done .djs-visual > :is(rect, circle, polygon) { stroke: var(--ok) !important; }
+.djs-connection.lit .djs-visual > path { stroke: var(--accent) !important; stroke-width: 3px !important; }
+.djs-connection.done .djs-visual > path { stroke: var(--ok) !important; }
+.bench { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 420px); gap: 18px; align-items: start; }
+@media (max-width: 1100px) { .bench { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .enclave { grid-column: 1 / -1; } }
+@media (max-width: 720px) { .bench { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; min-width: 0; }
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 420px; overflow: auto; }
+ol.steps li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 8px; padding: 6px 8px; border-radius: 6px; }
+ol.steps li.current { background: var(--accent-soft); }
+ol.steps .t { font: 12px/1.6 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+ol.steps .what { font-weight: 600; }
+ol.steps .detail { font: 12.5px/1.45 var(--font-mono); color: var(--muted); overflow-wrap: anywhere; }
+table.layers { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.layers td { padding: 7px 6px; border-top: 1px solid var(--rule); vertical-align: top; }
+table.layers tr:first-child td { border-top: 0; }
+table.layers td.n { font: 500 13px/1.5 var(--font-mono); color: var(--muted); width: 26px; }
+table.layers td.name { font-weight: 600; white-space: nowrap; }
+table.layers td.what { font: 12.5px/1.5 var(--font-mono); color: var(--muted); overflow-wrap: anywhere; }
+table.layers tr.on td { background: var(--accent-soft); }
+table.layers tr.on td.n { color: var(--accent); }
+.enclave .facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; font-size: 13.5px; margin: 0 0 12px; }
+.enclave .facts dt { color: var(--muted); }
+.enclave .facts dd { margin: 0; font-family: var(--font-mono); font-size: 12.5px; overflow-wrap: anywhere; }
+.badge { display: inline-block; font: 600 12px/1 var(--font-mono); padding: 5px 8px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); }
+.badge.recorded { background: var(--accent-soft); color: var(--accent); }
+.note { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+.vc { width: 100%; height: 560px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); }
+.result { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 18px; align-items: start; }
+@media (max-width: 900px) { .result { grid-template-columns: minmax(0, 1fr); } }
+.answer { font-size: 16px; line-height: 1.55; max-width: 75ch; }
+.answer table { border-collapse: collapse; font-size: 14px; display: block; overflow-x: auto; }
+.answer th, .answer td { border: 1px solid var(--rule); padding: 4px 8px; text-align: left; }
+.answer code { font-family: var(--font-mono); font-size: 0.9em; }
+.record .verify { display: block; text-align: center; text-decoration: none; margin: 4px 0 12px; padding: 14px; border-radius: 8px; background: var(--ok); color: var(--panel); font: 700 18px/1.2 var(--font-display); }
+.record .verify[aria-disabled="true"] { background: var(--rule); color: var(--muted); pointer-events: none; }
+.record dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; font-size: 13.5px; margin: 0; }
+.record dt { color: var(--muted); }
+.record dd { margin: 0; font: 12.5px/1.5 var(--font-mono); overflow-wrap: anywhere; }
+footer { font-size: 13px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .djs-container .djs-visual > * { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Openmaxxing<small>One question in. One signed record out. Every layer open.</small></h1>
+    <span class="mode" id="mode" data-live="false">Replay of a recorded run</span>
+  </header>
+
+  <section class="question" aria-label="Question">
+    <div class="q" id="question">Loading the recorded run…</div>
+    <input id="ask-input" type="text" hidden placeholder="Ask a question about the portal's open data" aria-label="Question">
+    <button class="primary" id="ask-btn" hidden>Ask</button>
+  </section>
+
+  <div class="controls">
+    <button id="play" class="primary">Play</button>
+    <button id="step">Step</button>
+    <button id="restart">Restart</button>
+    <span class="status" id="status"></span>
+  </div>
+
+  <section class="diagram" aria-label="Dataflow diagram, BPMN 2.0">
+    <div id="canvas"></div>
+  </section>
+
+  <section class="bench">
+    <div class="card">
+      <h2>Steps</h2>
+      <ol class="steps" id="steps"></ol>
+    </div>
+    <div class="card">
+      <h2>The eight open layers</h2>
+      <table class="layers" id="layers"></table>
+    </div>
+    <div class="card enclave">
+      <h2>Enclave evidence</h2>
+      <p><span class="badge recorded" id="vc-badge">Recorded at run time</span></p>
+      <dl class="facts" id="enclave-facts"></dl>
+      <button id="vc-toggle">Show Tinfoil's Verification Center</button>
+      <iframe class="vc" id="vc" hidden title="Tinfoil Verification Center"></iframe>
+      <p class="note" id="vc-note">This is the verification document Tinfoil's SDK produced when the recorded run connected. The Verification Center shows that document. It is not a live check.</p>
+    </div>
+  </section>
+
+  <section class="result">
+    <div class="card">
+      <h2>Answer</h2>
+      <div class="answer" id="answer"><p class="note">The answer appears when the run reaches it.</p></div>
+    </div>
+    <div class="card record">
+      <h2>The record</h2>
+      <a class="verify" id="verify" href="#" target="_blank" rel="noopener" aria-disabled="true">Verify this record</a>
+      <dl id="record-facts"></dl>
+      <p class="note">The link opens typedstandards.org's verifier, which fetches the signed bundle from this site and checks it in your browser.</p>
+    </div>
+  </section>
+
+  <footer>
+    MIT. Source: <a href="https://github.com/openmaxxing/openmaxxing">github.com/openmaxxing/openmaxxing</a>.
+    Diagram rendered with bpmn-js. Inference by Tinfoil; data from a Socrata portal; record under the Typed Standards Specification v0.1.
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bpmn-js@18.31.0/dist/bpmn-navigated-viewer.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script>
+(() => {
+  'use strict';
+  const VC_ORIGIN = 'https://verification-center.tinfoil.sh';
+  const $ = (id) => document.getElementById(id);
+  const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const short = (s, n = 12) => (s && s.length > n * 2 + 1 ? `${s.slice(0, n)}…${s.slice(-6)}` : s || '');
+
+  const LAYERS = [
+    [1, 'Open source software', 'openmaxxing, MIT'],
+    [2, 'Open harness', '@typedstandards/civic-typed-harness'],
+    [3, 'Open routers', 'civic-typed-router (sources) · Tinfoil confidential model router (models)'],
+    [4, 'Open-weight model', 'gpt-oss-120b, Apache-2.0'],
+    [5, 'Open inference', 'Tinfoil hardware enclave, attested'],
+    [6, 'Open data', 'Socrata portal via socrata-mcp-server'],
+    [7, 'Open record', 'signed record on this site\'s registry'],
+    [8, 'Open standard', 'Typed Standards Specification v0.1, CC BY 4.0'],
+  ];
+
+  let viewer, frames = [], index = -1, timer = null, replay = null, verificationDoc = null, vcReady = false;
+  let live = false;
+
+  function renderLayers(on = []) {
+    $('layers').innerHTML = '';
+    for (const [n, name, what] of LAYERS) {
+      const tr = document.createElement('tr');
+      if (on.includes(n)) tr.className = 'on';
+      tr.innerHTML = `<td class="n">${n}</td><td class="name"></td><td class="what"></td>`;
+      tr.children[1].textContent = name;
+      tr.children[2].textContent = what;
+      $('layers').appendChild(tr);
+    }
+  }
+
+  function setLayerDetails(r) {
+    if (!r) return;
+    const v = r.versions || {};
+    LAYERS[1][2] = `@typedstandards/civic-typed-harness@${v.harness}`;
+    LAYERS[2][2] = `civic-typed-router@${v.router} (sources) · ${r.modelRouter || 'tinfoilsh/confidential-model-router'} (models)`;
+    LAYERS[3][2] = `${r.model}, Apache-2.0`;
+    LAYERS[4][2] = `Tinfoil enclave via tinfoil@${v.tinfoil}`;
+    LAYERS[5][2] = `${r.portal} via socrata-mcp-server@${v.socrata}`;
+  }
+
+  // One frame per thing the run did, built from the run's own events.
+  function framesFrom(r) {
+    const out = [];
+    const f = (el, what, detail, layers, t) => out.push({ el, what, detail, layers, t });
+    f('start_question', 'Question', r.question, [1], 0);
+    for (const e of r.events) {
+      if (e.step === 'router') f('task_compose', 'Source router composes the tools and the prompt', `${e.tools.join(', ')} · prompt ${e.promptChars.toLocaleString()} chars · sha256 ${short(e.promptHash, 8)}`, [3], e.t);
+      if (e.step === 'attestation') f('task_attest', 'Tinfoil SDK attests the model router enclave', `${e.configRepo} ${e.releaseTag || ''} · digest ${short(e.releaseDigest, 8)} · verified=${e.securityVerified}`, [3, 5], e.t);
+      if (e.step === 'model' && e.status === 'request') {
+        f('task_forward', 'Model router verifies the model enclave and forwards', `request ${e.index + 1}, encrypted to the attested key`, [3, 5], e.t);
+        f('task_model', `${r.model} turn ${e.index + 1}`, 'open weights, in a hardware enclave', [4, 5], e.t);
+      }
+      if (e.step === 'tool' && e.status === 'call') {
+        f('gw_tool', 'The model calls a tool', e.name, [4], e.t);
+        f('task_resolve', 'Source router resolves the called name', `${e.name} → ${e.upstream || 'refused'} ${JSON.stringify(e.args || {}).slice(0, 160)}`, [3], e.t);
+      }
+      if (e.step === 'tool' && e.status === 'result') f('task_query', 'socrata-mcp-server queries the portal', `${e.bytes.toLocaleString()} bytes in ${e.ms} ms`, [6], e.t);
+      if (e.step === 'tool' && e.status === 'error') f('task_query', 'The call was refused', e.message, [6], e.t);
+      if (e.step === 'answer') f('gw_tool', 'No tool call: the model answers', `${e.chars.toLocaleString()} chars`, [4], e.t);
+    }
+    if (r.envelopeHash) {
+      f('task_record', 'Harness derives the fields; the CLI signs and checks', `envelope ${short(r.envelopeHash, 10)} · ${short(r.signer, 14)}`, [2, 7, 8], null);
+      f('task_publish', 'GitHub Pages serves the bundle and the key registry', r.files ? r.files.bundle : '', [1, 7], null);
+      f('task_verify', 'Anyone verifies it at typedstandards.org', 'the verifier checks the signature, the hashes and the key', [7, 8], null);
+      f('end_record', 'Signed record', r.verifyLink, [7, 8], null);
+    }
+    return out;
+  }
+
+  function mark(frameIndex) {
+    const canvas = viewer.get('canvas');
+    const registry = viewer.get('elementRegistry');
+    registry.forEach((el) => { canvas.removeMarker(el.id, 'lit'); canvas.removeMarker(el.id, 'done'); });
+    for (let i = 0; i <= frameIndex; i += 1) {
+      const fr = frames[i];
+      const prev = frames[i - 1];
+      const cls = i === frameIndex ? 'lit' : 'done';
+      if (registry.get(fr.el)) { canvas.removeMarker(fr.el, 'done'); canvas.addMarker(fr.el, cls); }
+      if (prev) {
+        const flow = registry.filter((c) => c.type === 'bpmn:SequenceFlow' && c.source.id === prev.el && c.target.id === fr.el)[0];
+        if (flow) { canvas.removeMarker(flow.id, 'done'); canvas.addMarker(flow.id, cls); }
+      }
+    }
+  }
+
+  function show(i) {
+    index = i;
+    const fr = frames[i];
+    if (!fr) return;
+    mark(i);
+    renderLayers(fr.layers);
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="t"></span><span><div class="what"></div><div class="detail"></div></span>';
+    li.querySelector('.t').textContent = fr.t == null ? '' : `${(fr.t / 1000).toFixed(1)}s`;
+    li.querySelector('.what').textContent = fr.what;
+    li.querySelector('.detail').textContent = fr.detail || '';
+    $('steps').querySelectorAll('li.current').forEach((n) => n.classList.remove('current'));
+    li.classList.add('current');
+    $('steps').appendChild(li);
+    $('steps').scrollTop = $('steps').scrollHeight;
+    $('status').textContent = `step ${i + 1} of ${frames.length}`;
+    if (fr.el === 'gw_tool' && fr.what.startsWith('No tool call') && replay) showAnswer(replay.answer);
+    if (fr.el === 'end_record' && replay) showRecord(replay);
+  }
+
+  function showAnswer(text) {
+    const html = window.marked ? window.marked.parse(text || '') : text;
+    $('answer').innerHTML = window.DOMPurify ? window.DOMPurify.sanitize(html) : '';
+    if (!window.DOMPurify) $('answer').textContent = text;
+  }
+
+  function showRecord(r) {
+    const a = $('verify');
+    a.href = r.verifyLink;
+    a.setAttribute('aria-disabled', 'false');
+    const dl = $('record-facts');
+    dl.innerHTML = '';
+    const add = (k, v, href) => {
+      const dt = document.createElement('dt'); dt.textContent = k;
+      const dd = document.createElement('dd');
+      if (href) { const l = document.createElement('a'); l.href = href; l.textContent = v; l.target = '_blank'; l.rel = 'noopener'; dd.appendChild(l); } else dd.textContent = v;
+      dl.append(dt, dd);
+    };
+    add('Envelope hash', r.envelopeHash);
+    add('Signer', r.signer);
+    add('Model', r.model);
+    if (r.files) {
+      add('Bundle', r.files.bundle, r.files.bundle);
+      add('Verification document', r.files.verification, r.files.verification);
+      add('Composed prompt', r.files.systemPrompt, r.files.systemPrompt);
+    }
+  }
+
+  function showEnclave(doc, recorded) {
+    verificationDoc = doc;
+    const dl = $('enclave-facts');
+    dl.innerHTML = '';
+    if (!doc) return;
+    const add = (k, v) => { const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v; dl.append(dt, dd); };
+    add('Verified', String(doc.securityVerified));
+    add('Router repo', doc.configRepo);
+    add('Release', `${doc.releaseTag || ''} ${short(doc.releaseDigest, 10)}`);
+    add('Enclave host', doc.enclaveHost);
+    add('Fingerprint', short(doc.enclaveFingerprint, 12));
+    add('Verified at', doc.verifiedAt);
+    $('vc-badge').textContent = recorded ? 'Recorded at run time' : 'Live: this connection';
+    $('vc-badge').className = recorded ? 'badge recorded' : 'badge';
+    $('vc-note').textContent = recorded
+      ? 'This is the verification document Tinfoil\'s SDK produced when the recorded run connected. The Verification Center shows that document. It is not a live check.'
+      : 'This document comes from the connection this run just made, on this machine.';
+    postDoc();
+  }
+
+  function postDoc() {
+    const frame = $('vc');
+    if (vcReady && verificationDoc && frame.contentWindow) {
+      frame.contentWindow.postMessage({ type: 'TINFOIL_VERIFICATION_DOCUMENT', document: verificationDoc }, VC_ORIGIN);
+    }
+  }
+  window.addEventListener('message', (event) => {
+    if (event.origin !== VC_ORIGIN) return;
+    if (event.data && event.data.type === 'TINFOIL_VERIFICATION_CENTER_READY') { vcReady = true; postDoc(); }
+    if (event.data && event.data.type === 'TINFOIL_REQUEST_VERIFICATION_DOCUMENT') postDoc();
+  });
+  $('vc-toggle').addEventListener('click', () => {
+    const frame = $('vc');
+    if (frame.hidden) {
+      if (!frame.src) {
+        const dark = matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light';
+        frame.src = `${VC_ORIGIN}?darkMode=${dark}&showHeader=true`;
+      }
+      frame.hidden = false;
+      $('vc-toggle').textContent = 'Hide the Verification Center';
+    } else {
+      frame.hidden = true;
+      $('vc-toggle').textContent = 'Show Tinfoil\'s Verification Center';
+    }
+  });
+
+  function stop() { clearInterval(timer); timer = null; $('play').textContent = 'Play'; }
+  function play() {
+    if (timer) return stop();
+    if (index >= frames.length - 1) restart();
+    $('play').textContent = 'Pause';
+    timer = setInterval(() => { if (index >= frames.length - 1) return stop(); show(index + 1); }, 1300);
+  }
+  function restart() {
+    stop();
+    index = -1;
+    $('steps').innerHTML = '';
+    $('answer').innerHTML = '<p class="note">The answer appears when the run reaches it.</p>';
+    const a = $('verify'); a.href = '#'; a.setAttribute('aria-disabled', 'true');
+    $('record-facts').innerHTML = '';
+    mark(-1);
+    renderLayers([]);
+    $('status').textContent = frames.length ? `${frames.length} steps` : '';
+  }
+  $('play').addEventListener('click', play);
+  $('step').addEventListener('click', () => { stop(); if (index < frames.length - 1) show(index + 1); });
+  $('restart').addEventListener('click', restart);
+
+  async function loadReplay() {
+    const latest = await fetch('runs/latest.json', { cache: 'no-store' }).then((r) => r.json());
+    replay = await fetch(`runs/${latest.name}/replay.json`, { cache: 'no-store' }).then((r) => r.json());
+    const doc = await fetch(replay.files.verification).then((r) => r.json());
+    setLayerDetails({ ...replay, modelRouter: doc.configRepo });
+    $('question').textContent = replay.question;
+    frames = framesFrom(replay);
+    showEnclave(doc, true);
+    restart();
+    // At rest the page shows the whole recorded run; Play replays it step by step.
+    for (let i = 0; i < frames.length; i += 1) show(i);
+    $('status').textContent = `${frames.length} steps recorded · press Play to replay`;
+  }
+
+  // Live mode: only when this page is served by npm run serve on this machine.
+  async function detectLive() {
+    if (!['localhost', '127.0.0.1'].includes(location.hostname)) return false;
+    try {
+      const r = await fetch('/api/live', { cache: 'no-store' });
+      if (!r.ok) return false;
+      const info = await r.json();
+      return info.live === true ? info : false;
+    } catch { return false; }
+  }
+
+  async function askLive(question) {
+    stop();
+    frames = [];
+    replay = { question, events: [], model: liveInfo.model, versions: liveInfo.versions, portal: liveInfo.portal };
+    setLayerDetails(replay);
+    restart();
+    $('ask-btn').disabled = true;
+    $('status').textContent = 'running…';
+    show((frames = framesFrom(replay), 0));
+    const res = await fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Openmaxxing': '1' },
+      body: JSON.stringify({ question }),
+    });
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let nl;
+      while ((nl = buffer.indexOf('\n')) >= 0) {
+        const line = buffer.slice(0, nl); buffer = buffer.slice(nl + 1);
+        if (!line.trim()) continue;
+        const e = JSON.parse(line);
+        if (e.step === 'error') { $('status').textContent = `error: ${e.message}`; $('ask-btn').disabled = false; return; }
+        if (e.step === 'attestation' && e.document) showEnclave(e.document, false);
+        if (e.step === 'done') { replay = e.replay; showAnswer(replay.answer); }
+        else replay.events.push(e);
+        const next = framesFrom(replay);
+        frames = next;
+        while (index < frames.length - 1) show(index + 1);
+      }
+    }
+    $('ask-btn').disabled = false;
+  }
+
+  let liveInfo = null;
+  async function main() {
+    viewer = new BpmnJS({
+      container: '#canvas',
+      bpmnRenderer: { defaultFillColor: css('--diagram-fill'), defaultStrokeColor: css('--diagram-stroke'), defaultLabelColor: css('--ink') },
+      textRenderer: { defaultStyle: { fontFamily: 'Source Sans 3, Segoe UI, Arial, sans-serif', fontSize: 15 } },
+    });
+    const xml = await fetch('dataflow.bpmn').then((r) => r.text());
+    await viewer.importXML(xml);
+    // The pool is 1900 x 720; the margin keeps the bpmn.io mark clear of the end event.
+    const fit = () => {
+      const canvas = viewer.get('canvas');
+      canvas.zoom('fit-viewport', 'auto');
+      canvas.zoom(canvas.viewbox().scale * 0.96, 'auto');
+    };
+    fit();
+    addEventListener('resize', fit);
+    renderLayers([]);
+
+    liveInfo = await detectLive();
+    if (liveInfo) {
+      live = true;
+      $('mode').textContent = `Live: ${liveInfo.model} on ${liveInfo.portal}, your keys`;
+      $('mode').dataset.live = 'true';
+      $('question').hidden = true;
+      $('ask-input').hidden = false;
+      $('ask-btn').hidden = false;
+      $('ask-btn').addEventListener('click', () => { const q = $('ask-input').value.trim(); if (q) askLive(q).catch((err) => { $('status').textContent = String(err); $('ask-btn').disabled = false; }); });
+      $('ask-input').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') $('ask-btn').click(); });
+    }
+    try { await loadReplay(); } catch (err) {
+      $('question').textContent = 'No recorded run is published yet.';
+      $('status').textContent = String(err.message || err);
+    }
+  }
+  main();
+})();
+</script>
+</body>
+</html>
