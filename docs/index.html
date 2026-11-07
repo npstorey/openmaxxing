@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -7,133 +7,232 @@
 <meta name="description" content="One question in, one signed record out. Every layer of the chain is open.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bpmn-js@18.31.0/dist/assets/diagram-js.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bpmn-js@18.31.0/dist/assets/bpmn-js.css">
 <style>
-/* Layout: a bench. The diagram spans the top; beneath it, the step log, the eight layers and the enclave's evidence sit side by side; the answer and its verify link close the page. */
+/* Layout: a stat sheet for a room. The first frame holds the wordmark, the question, the answer with both
+   verify buttons, and the 8/8 card; the diagram, the step log and the attestation facts follow.
+   Projected in the light theme; every state is shown by shape or text as well as color. */
 :root {
-  --paper: #f3f6f7;
-  --panel: #ffffff;
-  --ink: #102030;
-  --muted: #566878;
-  --rule: #d3dde3;
-  --accent: #0a6b8f;
-  --accent-soft: #dcEEF5;
-  --ok: #1d7a4c;
-  --ok-soft: #dff2e7;
-  --warn: #9a5b00;
-  --diagram-stroke: #2b3d4f;
-  --diagram-fill: #ffffff;
-  --lane-label: #566878;
-  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
-  --font-body: "Source Sans 3", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --paper: #FAFAFA;
+  --panel: #FFFFFF;
+  --ink: #0A0A0A;
+  --muted: #5F5F5F;
+  --rule: #0A0A0A;
+  --hair: #D4D4D4;
+  --accent: #D1006F;
+  --accent-soft: #FFE1F0;
+  --ok: #0A0A0A;
+  --ok-soft: #FFF4C2;
+  --warn: #8A4B00;
+  --card: #F2C200;
+  --cta-bg: #0A0A0A;
+  --cta-fg: #C6FF00;
+  --volt: #C6FF00;
+  --diagram-stroke: #6B6B6B;
+  --diagram-fill: #FFFFFF;
+  --diagram-done: #0A0A0A;
+  --lane-label: #5F5F5F;
+  --font-display: "Anton", Impact, "Arial Narrow", sans-serif;
+  --font-body: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --fs-body: clamp(17px, 1.25vw, 24px);
+  --fs-label: clamp(14px, 1.05vw, 20px);
+  --fs-mono: clamp(13px, 1.05vw, 20px);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #0d1720; --panel: #132230; --ink: #e4edf2; --muted: #93a6b5; --rule: #24384a;
-    --accent: #5cc2e6; --accent-soft: #123447; --ok: #5fd39a; --ok-soft: #143326; --warn: #f0b45a;
-    --diagram-stroke: #b9cad6; --diagram-fill: #132230; --lane-label: #93a6b5;
+    --paper: #0A0A0A; --panel: #17171C; --ink: #F5F5F5; --muted: #8A8A8A; --rule: #F5F5F5; --hair: #33333A;
+    --accent: #C6FF00; --accent-soft: #263000; --ok: #F5F5F5; --ok-soft: #2A2A12; --warn: #FFB547;
+    --card: #FFD23F; --cta-bg: #C6FF00; --cta-fg: #0A0A0A; --volt: #C6FF00;
+    --diagram-stroke: #8A8A8A; --diagram-fill: #17171C; --diagram-done: #F5F5F5; --lane-label: #8A8A8A;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #0d1720; --panel: #132230; --ink: #e4edf2; --muted: #93a6b5; --rule: #24384a;
-  --accent: #5cc2e6; --accent-soft: #123447; --ok: #5fd39a; --ok-soft: #143326; --warn: #f0b45a;
-  --diagram-stroke: #b9cad6; --diagram-fill: #132230; --lane-label: #93a6b5;
+  --paper: #0A0A0A; --panel: #17171C; --ink: #F5F5F5; --muted: #8A8A8A; --rule: #F5F5F5; --hair: #33333A;
+  --accent: #C6FF00; --accent-soft: #263000; --ok: #F5F5F5; --ok-soft: #2A2A12; --warn: #FFB547;
+  --card: #FFD23F; --cta-bg: #C6FF00; --cta-fg: #0A0A0A; --volt: #C6FF00;
+  --diagram-stroke: #8A8A8A; --diagram-fill: #17171C; --diagram-done: #F5F5F5; --lane-label: #8A8A8A;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
   background: var(--paper); color: var(--ink);
-  font: 16px/1.5 var(--font-body);
+  font: 600 var(--fs-body)/1.35 var(--font-body);
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 20px 48px;
+  padding-block: 16px 40px;
 }
-.wrap { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.wrap { max-width: 1880px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 .wrap > * { min-width: 0; }
-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
-h1 { font: 700 clamp(28px, 4vw, 44px)/1.05 var(--font-display); letter-spacing: -0.01em; margin: 0; }
-h1 small { display: block; font: 500 clamp(15px, 1.6vw, 19px)/1.3 var(--font-display); color: var(--muted); letter-spacing: 0; margin-top: 6px; }
-h2 { font: 600 12px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 10px; }
-a { color: var(--accent); }
-.mode { font: 500 13px/1 var(--font-mono); padding: 7px 10px; border: 1px solid var(--rule); border-radius: 999px; background: var(--panel); white-space: nowrap; }
-.mode[data-live="true"] { border-color: var(--ok); color: var(--ok); }
-.question { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; }
-.question .q { flex: 1 1 320px; min-width: 0; font: 500 clamp(17px, 2vw, 22px)/1.3 var(--font-display); text-wrap: balance; }
-.question input { flex: 1 1 320px; min-width: 0; font: 500 18px/1.3 var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); }
-button { font: 600 14px/1 var(--font-body); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
-button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
-button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+a { color: var(--ink); text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 4px solid var(--accent); outline-offset: 2px; }
+
+/* Header: the wordmark carries the joke, the line under it stays literal. */
+header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; }
+h1 { margin: 0; display: grid; gap: 2px; }
+h1 .wordmark { display: block; width: min(820px, 92vw); height: auto; }
+h1 .tagline { font: 700 var(--fs-body)/1.2 var(--font-body); letter-spacing: 0.01em; }
+.top-right { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.mode { font: 700 var(--fs-label)/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 12px; border: 3px solid var(--rule); background: var(--panel); }
+.mode[data-live="true"] { background: var(--volt); color: #0A0A0A; border-color: #0A0A0A; }
+h2 { font: 400 clamp(20px, 1.6vw, 30px)/1.05 var(--font-display); text-transform: uppercase; letter-spacing: 0.02em; margin: 0 0 4px; }
+h2 + .lit-line, .lit-line { margin: 0 0 10px; font: 600 var(--fs-label)/1.3 var(--font-body); color: var(--muted); }
+
+button { font: 700 var(--fs-label)/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.04em; padding: 10px 16px; border: 3px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
+button.primary { background: var(--cta-bg); border-color: var(--cta-bg); color: var(--cta-fg); }
 button[disabled] { opacity: 0.5; cursor: default; }
+button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+/* First frame: question and answer on the left, the stat card on the right. */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 16px; align-items: start; }
+@media (max-width: 1000px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+.qa { display: grid; gap: 12px; min-width: 0; }
+.card { background: var(--panel); border: 3px solid var(--rule); padding: 14px 16px; min-width: 0; }
+.question { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: var(--panel); border: 3px solid var(--rule); padding: 12px 14px; }
+.question .label { font: 800 var(--fs-label)/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); width: 100%; }
+.question .q { flex: 1 1 320px; min-width: 0; font: 800 clamp(22px, 1.9vw, 38px)/1.15 var(--font-body); text-wrap: balance; }
+.question input { flex: 1 1 320px; min-width: 0; font: 700 clamp(18px, 1.5vw, 28px)/1.2 var(--font-body); padding: 10px 12px; border: 3px solid var(--rule); background: var(--paper); color: var(--ink); }
+.answer { font: 600 var(--fs-body)/1.35 var(--font-body); }
+.answer p { margin: 0.3em 0; }
+.answer strong { font-weight: 800; }
+.answer table { border-collapse: collapse; display: block; overflow-x: auto; font-variant-numeric: tabular-nums; }
+.answer th, .answer td { border: 2px solid var(--rule); padding: 4px 12px; text-align: left; }
+.answer th { font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; }
+.answer em { font-style: normal; color: var(--muted); }
+.answer code { font: 500 0.85em var(--font-mono); }
+.verify-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin-top: 12px; }
+.verify, .verify-2 { display: block; text-align: center; text-decoration: none; padding: 14px 12px; font: 400 clamp(18px, 1.4vw, 28px)/1.1 var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; }
+.verify { background: var(--cta-bg); color: var(--cta-fg); border: 3px solid var(--cta-bg); }
+.verify[aria-disabled="true"] { background: var(--hair); border-color: var(--hair); color: var(--muted); pointer-events: none; }
+.verify-2 { background: var(--panel); color: var(--ink); border: 3px solid var(--rule); }
+.verify-2[hidden] { display: none; }
+.sig-note { margin: 10px 0 0; font: 600 var(--fs-label)/1.3 var(--font-body); color: var(--muted); }
+
+/* The 8/8 stat card. Rows render from the script; bars go from outline to solid, labels from "—" to "OPEN". */
+.statcard { background: var(--card); color: #0A0A0A; border: 4px solid #0A0A0A; padding: 14px 16px 16px; }
+.statcard .top { display: flex; align-items: flex-end; gap: 14px; border-bottom: 3px solid #0A0A0A; padding-bottom: 8px; margin-bottom: 8px; }
+.statcard .big { font: 400 clamp(56px, 5vw, 96px)/0.9 var(--font-display); }
+.statcard .pos { font: 400 clamp(22px, 1.8vw, 34px)/1 var(--font-display); letter-spacing: 0.04em; }
+.statcard h2 { margin: 0; font-size: clamp(18px, 1.35vw, 26px); color: #0A0A0A; }
+.statcard .lit-line { color: #2B2B2B; margin: 2px 0 8px; }
+table.layers { width: 100%; border-collapse: collapse; }
+table.layers td { padding: 3px 0; vertical-align: middle; }
+table.layers td.n { font: 400 clamp(17px, 1.3vw, 24px)/1 var(--font-display); width: 3.2em; letter-spacing: 0.04em; }
+table.layers td.name { font: 700 var(--fs-label)/1.1 var(--font-body); padding-right: 8px; white-space: nowrap; }
+table.layers td.bar { width: 42%; }
+table.layers td.bar span { display: block; height: clamp(12px, 1vw, 18px); border: 3px solid #0A0A0A; background: transparent; transition: background 200ms; }
+table.layers td.state { font: 700 var(--fs-label)/1 var(--font-mono); width: 4.2em; text-align: right; }
+table.layers tr.open td.bar span { background: #0A0A0A; }
+table.layers tr.on td.n, table.layers tr.on td.name { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 3px; }
+table.layers tr.on td.bar span { background: repeating-linear-gradient(90deg, #0A0A0A 0 10px, transparent 10px 14px); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Replay controls and the diagram. */
 .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.controls .status { font: 13px/1.3 var(--font-mono); color: var(--muted); margin-left: auto; min-width: 0; }
-.diagram { position: relative; background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
-#canvas { width: 100%; aspect-ratio: 2.55; max-height: 78vh; }
-.diagram .bjs-powered-by { opacity: 0.5; }
-.djs-container .djs-visual > :is(rect, circle, polygon, path) { transition: fill 200ms, stroke 200ms; }
-.djs-element.lit .djs-visual > :is(rect, circle, polygon) { stroke: var(--accent) !important; stroke-width: 3px !important; fill: var(--accent-soft) !important; }
-.djs-element.done .djs-visual > :is(rect, circle, polygon) { stroke: var(--ok) !important; }
-.djs-connection.lit .djs-visual > path { stroke: var(--accent) !important; stroke-width: 3px !important; }
-.djs-connection.done .djs-visual > path { stroke: var(--ok) !important; }
-.bench { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 420px); gap: 18px; align-items: start; }
-@media (max-width: 1100px) { .bench { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .enclave { grid-column: 1 / -1; } }
+.controls .status { font: 500 var(--fs-mono)/1.3 var(--font-mono); color: var(--muted); margin-left: auto; min-width: 0; }
+.diagram { position: relative; background: var(--panel); border: 3px solid var(--rule); overflow: hidden; }
+#canvas { width: 100%; aspect-ratio: 2.55; max-height: 62vh; }
+.djs-container .djs-visual > :is(rect, circle, polygon) { stroke: var(--diagram-stroke) !important; fill: var(--diagram-fill) !important; stroke-width: 3px !important; transition: stroke 200ms, stroke-width 200ms; }
+.djs-container .djs-connection .djs-visual > path { stroke: var(--diagram-stroke) !important; stroke-width: 3px !important; }
+.djs-container .djs-visual > path { stroke: var(--diagram-stroke) !important; }
+.djs-container .djs-visual text, .djs-container .djs-label text { fill: var(--ink) !important; }
+.djs-element.done .djs-visual > :is(rect, circle, polygon) { stroke: var(--diagram-done) !important; stroke-width: 3px !important; }
+.djs-connection.done .djs-visual > path { stroke: var(--diagram-done) !important; stroke-width: 3px !important; }
+.djs-element.lit .djs-visual > :is(rect, circle, polygon) { stroke: var(--accent) !important; stroke-width: 6px !important; }
+.djs-connection.lit .djs-visual > path { stroke: var(--accent) !important; stroke-width: 5px !important; stroke-dasharray: 10 4; }
+
+/* Below the diagram: the step log, the attestation facts, the record's evidence. */
+.bench { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 1200px) { .bench { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .bench > :last-child { grid-column: 1 / -1; } }
 @media (max-width: 720px) { .bench { grid-template-columns: minmax(0, 1fr); } }
-.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; min-width: 0; }
-ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 420px; overflow: auto; }
-ol.steps li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 8px; padding: 6px 8px; border-radius: 6px; }
-ol.steps li.current { background: var(--accent-soft); }
-ol.steps .t { font: 12px/1.6 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
-ol.steps .what { font-weight: 600; }
-ol.steps .detail { font: 12.5px/1.45 var(--font-mono); color: var(--muted); overflow-wrap: anywhere; }
-table.layers { width: 100%; border-collapse: collapse; font-size: 14px; }
-table.layers td { padding: 7px 6px; border-top: 1px solid var(--rule); vertical-align: top; }
-table.layers tr:first-child td { border-top: 0; }
-table.layers td.n { font: 500 13px/1.5 var(--font-mono); color: var(--muted); width: 26px; }
-table.layers td.name { font-weight: 600; white-space: nowrap; }
-table.layers td.what { font: 12.5px/1.5 var(--font-mono); color: var(--muted); overflow-wrap: anywhere; }
-table.layers tr.on td { background: var(--accent-soft); }
-table.layers tr.on td.n { color: var(--accent); }
-.enclave .facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; font-size: 13.5px; margin: 0 0 12px; }
-.enclave .facts dt { color: var(--muted); }
-.enclave .facts dd { margin: 0; font-family: var(--font-mono); font-size: 12.5px; overflow-wrap: anywhere; }
-.badge { display: inline-block; font: 600 12px/1 var(--font-mono); padding: 5px 8px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); }
-.badge.recorded { background: var(--accent-soft); color: var(--accent); }
-.note { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
-.vc { width: 100%; height: 560px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); }
-.result { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 18px; align-items: start; }
-@media (max-width: 900px) { .result { grid-template-columns: minmax(0, 1fr); } }
-.answer { font-size: 16px; line-height: 1.55; max-width: 75ch; }
-.answer table { border-collapse: collapse; font-size: 14px; display: block; overflow-x: auto; }
-.answer th, .answer td { border: 1px solid var(--rule); padding: 4px 8px; text-align: left; }
-.answer code { font-family: var(--font-mono); font-size: 0.9em; }
-.record .verify { display: block; text-align: center; text-decoration: none; margin: 4px 0 12px; padding: 14px; border-radius: 8px; background: var(--ok); color: var(--panel); font: 700 18px/1.2 var(--font-display); }
-.record .verify[aria-disabled="true"] { background: var(--rule); color: var(--muted); pointer-events: none; }
-.record dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; font-size: 13.5px; margin: 0; }
-.record dt { color: var(--muted); }
-.record dd { margin: 0; font: 12.5px/1.5 var(--font-mono); overflow-wrap: anywhere; }
-.enclave-run { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--rule); display: grid; gap: 8px; }
-.enclave-run h3 { margin: 0; font: 600 15px/1.3 var(--font-body); }
-.enclave-run .verify-2 { display: block; text-align: center; text-decoration: none; padding: 10px; border-radius: 8px; border: 2px solid var(--ok); color: var(--ok); font: 700 15px/1.2 var(--font-display); }
-footer { font-size: 13px; color: var(--muted); }
-@media (prefers-reduced-motion: reduce) { .djs-container .djs-visual > * { transition: none; } }
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; max-height: 460px; overflow: auto; }
+ol.steps li { display: grid; grid-template-columns: 4.2em minmax(0, 1fr); gap: 8px; padding: 6px 8px; border-left: 6px solid transparent; }
+ol.steps li.current { border-left-color: var(--accent); background: var(--accent-soft); }
+ol.steps .t { font: 500 var(--fs-mono)/1.4 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+ol.steps .what { font-weight: 800; }
+ol.steps .detail { font: 500 calc(var(--fs-mono) * 0.8)/1.4 var(--font-mono); color: var(--muted); overflow-wrap: anywhere; }
+.enclave .facts-table { border: 4px solid var(--rule); padding: 8px 10px; }
+.enclave .facts-title { font: 400 clamp(22px, 1.8vw, 34px)/1 var(--font-display); letter-spacing: 0.02em; border-bottom: 8px solid var(--rule); padding-bottom: 6px; margin: 0 0 4px; }
+.enclave .facts { display: grid; grid-template-columns: auto minmax(0, 1fr); margin: 0; }
+.enclave .facts dt, .enclave .facts dd { border-bottom: 2px solid var(--rule); padding: 4px 0; }
+.enclave .facts dt { font-weight: 800; padding-right: 10px; }
+.enclave .facts dd { margin: 0; font: 500 calc(var(--fs-mono) * 0.85)/1.5 var(--font-mono); overflow-wrap: anywhere; text-align: right; }
+.badge { display: inline-block; font: 800 var(--fs-label)/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 10px; border: 3px solid var(--rule); }
+.badge.recorded { background: var(--panel); }
+.note { font: 600 var(--fs-label)/1.3 var(--font-body); color: var(--muted); margin: 8px 0 0; }
+.vc { width: 100%; height: 560px; border: 3px solid var(--rule); background: var(--paper); margin-top: 8px; }
+#vc-toggle { margin-top: 10px; }
+.record dl, .enclave-run dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; margin: 0; }
+.record dt, .enclave-run dt { font-weight: 800; }
+.record dd, .enclave-run dd { margin: 0; font: 500 calc(var(--fs-mono) * 0.8)/1.5 var(--font-mono); overflow-wrap: anywhere; }
+.enclave-run { margin-top: 14px; padding-top: 12px; border-top: 3px solid var(--rule); display: grid; gap: 8px; }
+.enclave-run h3 { margin: 0; font: 800 var(--fs-body)/1.2 var(--font-body); }
+footer { font: 600 var(--fs-label)/1.4 var(--font-body); color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .djs-container .djs-visual > *, table.layers td.bar span { transition: none; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Openmaxxing<small>One question in. One signed record out. Every layer open.</small></h1>
-    <span class="mode" id="mode" data-live="false">Replay of a recorded run</span>
+    <h1>
+      <svg class="wordmark" viewBox="0 0 880 150" role="img" aria-labelledby="om-t">
+        <title id="om-t">Openmaxxing</title>
+        <defs>
+          <linearGradient id="om-chrome" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FFFFFF"/>
+            <stop offset="0.38" stop-color="#C9CED6"/>
+            <stop offset="0.5" stop-color="#4A525C"/>
+            <stop offset="0.54" stop-color="#E9EDF2"/>
+            <stop offset="0.78" stop-color="#9AA1AB"/>
+            <stop offset="1" stop-color="#FFFFFF"/>
+          </linearGradient>
+        </defs>
+        <text x="6" y="122" textLength="700" lengthAdjust="spacingAndGlyphs" style="font-family: Anton, Impact, 'Arial Narrow', sans-serif; font-size: 124px; letter-spacing: 2px; fill: url(#om-chrome); stroke: var(--ink); stroke-width: 5; paint-order: stroke; stroke-linejoin: round;">OPENMAXXING</text>
+        <g transform="translate(728 24)">
+          <rect width="132" height="100" style="fill: var(--volt); stroke: var(--ink); stroke-width: 5;"/>
+          <text x="66" y="78" text-anchor="middle" style="font-family: Anton, Impact, sans-serif; font-size: 70px; fill: #0A0A0A;">8/8</text>
+        </g>
+      </svg>
+      <span class="tagline">One question in. One signed record out. Every layer open.</span>
+    </h1>
+    <div class="top-right">
+      <span class="mode" id="mode" data-live="false">Replay of a recorded run</span>
+      <button id="theme" aria-pressed="false" title="Switch between the light and dark themes">Dark theme</button>
+    </div>
   </header>
 
-  <section class="question" aria-label="Question">
-    <div class="q" id="question">Loading the recorded run…</div>
-    <input id="ask-input" type="text" hidden placeholder="e.g. What were the five most common 311 complaint types in NYC in October 2026?" aria-label="Question">
-    <button class="primary" id="ask-btn" hidden>Ask</button>
+  <section class="hero">
+    <div class="qa">
+      <section class="question" aria-label="Question">
+        <span class="label">The question</span>
+        <div class="q" id="question">Loading the recorded run…</div>
+        <input id="ask-input" type="text" hidden placeholder="e.g. What were the five most common 311 complaint types in NYC in October 2026?" aria-label="Question">
+        <button class="primary" id="ask-btn" hidden>Ask</button>
+      </section>
+      <div class="card">
+        <h2>The answer</h2>
+        <div class="answer" id="answer"><p class="note">The answer appears when the run reaches it.</p></div>
+        <div class="verify-row">
+          <a class="verify" id="verify" href="#" target="_blank" rel="noopener" aria-disabled="true">Verify this record</a>
+          <a class="verify-2" id="enclave-verify" href="#" target="_blank" rel="noopener" hidden>Verify the record signed inside the enclave</a>
+        </div>
+        <p class="sig-note">The answer is a signed record (Ed25519). A signature shows the bytes are unchanged since signing, not that they are true. Check it yourself.</p>
+      </div>
+    </div>
+    <aside class="statcard" aria-label="The eight open layers">
+      <div class="top">
+        <span class="big">8/8</span>
+        <span class="pos">OPEN</span>
+      </div>
+      <h2>Openmaxxed: 8 of 8 layers open</h2>
+      <p class="lit-line">Built different: open code, open harness, open routers, open weights, open inference, open data, open record, open standard.</p>
+      <table class="layers" id="layers"></table>
+    </aside>
   </section>
 
   <div class="controls">
@@ -151,36 +250,29 @@ footer { font-size: 13px; color: var(--muted); }
   <section class="bench">
     <div class="card">
       <h2>Steps</h2>
+      <p class="lit-line">What the run did, in order, with its own timing.</p>
       <ol class="steps" id="steps"></ol>
     </div>
-    <div class="card">
-      <h2>The eight open layers</h2>
-      <table class="layers" id="layers"></table>
-    </div>
     <div class="card enclave">
-      <h2>Enclave evidence</h2>
+      <h2>Locked in</h2>
+      <p class="lit-line">Before sending anything, Tinfoil's SDK checked the model router enclave's attestation.</p>
+      <div class="facts-table">
+        <p class="facts-title">ATTESTATION FACTS</p>
+        <dl class="facts" id="enclave-facts"></dl>
+      </div>
       <p><span class="badge recorded" id="vc-badge">Recorded at run time</span></p>
-      <dl class="facts" id="enclave-facts"></dl>
+      <p class="note" id="vc-note">This is the verification document Tinfoil's SDK produced when the recorded run connected. The Verification Center shows that document. It is not a live check.</p>
       <button id="vc-toggle">Show Tinfoil's Verification Center</button>
       <iframe class="vc" id="vc" hidden title="Tinfoil Verification Center"></iframe>
-      <p class="note" id="vc-note">This is the verification document Tinfoil's SDK produced when the recorded run connected. The Verification Center shows that document. It is not a live check.</p>
-    </div>
-  </section>
-
-  <section class="result">
-    <div class="card">
-      <h2>Answer</h2>
-      <div class="answer" id="answer"><p class="note">The answer appears when the run reaches it.</p></div>
     </div>
     <div class="card record">
       <h2>The record</h2>
-      <a class="verify" id="verify" href="#" target="_blank" rel="noopener" aria-disabled="true">Verify this record</a>
+      <p class="lit-line">The evidence behind the verify buttons.</p>
       <dl id="record-facts"></dl>
-      <p class="note">The link opens typedstandards.org's verifier, which fetches the signed bundle from this site and checks it in your browser.</p>
+      <p class="note">The verify link opens typedstandards.org's verifier, which fetches the signed bundle from this site and checks it in your browser.</p>
       <div class="enclave-run" id="enclave-run" hidden>
         <h3>The same question, signed inside a Tinfoil Container</h3>
         <dl id="enclave-facts-run"></dl>
-        <a class="verify-2" id="enclave-verify" href="#" target="_blank" rel="noopener">Verify the enclave-signed record</a>
         <p class="note">The container ran the whole chain in a hardware enclave and signed with a key it generated. That key is published in the container's attestation.</p>
       </div>
     </div>
@@ -217,16 +309,33 @@ footer { font-size: 13px; color: var(--muted); }
   let viewer, frames = [], index = -1, timer = null, replay = null, verificationDoc = null, vcReady = false;
   let live = false;
 
-  function renderLayers(on = []) {
+  const ABBR = ['SRC', 'HRN', 'RTR', 'WTS', 'INF', 'DAT', 'REC', 'STD'];
+
+  // The stat card: a layer the run has used reads OPEN with a solid bar; the layer the
+  // current step uses is underlined and striped. Full names stay in the row's text.
+  function renderLayers(on = [], open = new Set()) {
     $('layers').innerHTML = '';
     for (const [n, name, what] of LAYERS) {
       const tr = document.createElement('tr');
-      if (on.includes(n)) tr.className = 'on';
-      tr.innerHTML = `<td class="n">${n}</td><td class="name"></td><td class="what"></td>`;
+      const isOpen = open.has(n);
+      tr.className = [isOpen ? 'open' : '', on.includes(n) ? 'on' : ''].join(' ').trim();
+      tr.title = what;
+      tr.innerHTML = '<td class="n"></td><td class="name"></td><td class="bar"><span></span></td><td class="state"></td>';
+      tr.children[0].textContent = ABBR[n - 1];
       tr.children[1].textContent = name;
-      tr.children[2].textContent = what;
+      const detail = document.createElement('span');
+      detail.className = 'sr';
+      detail.textContent = `: ${what}`;
+      tr.children[1].appendChild(detail);
+      tr.children[3].textContent = isOpen ? 'OPEN' : '—';
       $('layers').appendChild(tr);
     }
+  }
+
+  function openUpTo(i) {
+    const open = new Set();
+    for (let k = 0; k <= i && k < frames.length; k += 1) for (const n of frames[k].layers) open.add(n);
+    return open;
   }
 
   function setLayerDetails(r) {
@@ -289,7 +398,7 @@ footer { font-size: 13px; color: var(--muted); }
     const fr = frames[i];
     if (!fr) return;
     mark(i);
-    renderLayers(fr.layers);
+    renderLayers(fr.layers, openUpTo(i));
     const li = document.createElement('li');
     li.innerHTML = '<span class="t"></span><span><div class="what"></div><div class="detail"></div></span>';
     li.querySelector('.t').textContent = fr.t == null ? '' : `${(fr.t / 1000).toFixed(1)}s`;
@@ -338,7 +447,9 @@ footer { font-size: 13px; color: var(--muted); }
     dl.innerHTML = '';
     if (!doc) return;
     const add = (k, v) => { const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v; dl.append(dt, dd); };
-    add('Verified', String(doc.securityVerified));
+    const steps = Object.values(doc.steps || {});
+    add('Checks passed', `${steps.filter((x) => x.status === 'success').length} of ${steps.length}`);
+    add('securityVerified', String(doc.securityVerified));
     add('Router repo', doc.configRepo);
     add('Release', `${doc.releaseTag || ''} ${short(doc.releaseDigest, 10)}`);
     add('Enclave host', doc.enclaveHost);
@@ -369,7 +480,8 @@ footer { font-size: 13px; color: var(--muted); }
     const frame = $('vc');
     if (frame.hidden) {
       if (!frame.src) {
-        const dark = matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light';
+        const t = document.documentElement.dataset.theme;
+        const dark = t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches);
         frame.src = `${VC_ORIGIN}?darkMode=${dark}&showHeader=true`;
       }
       frame.hidden = false;
@@ -385,6 +497,8 @@ footer { font-size: 13px; color: var(--muted); }
     if (timer) return stop();
     if (index >= frames.length - 1) restart();
     $('play').textContent = 'Pause';
+    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelector('.diagram').scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
     timer = setInterval(() => { if (index >= frames.length - 1) return stop(); show(index + 1); }, pace);
   }
   function restart() {
@@ -395,7 +509,7 @@ footer { font-size: 13px; color: var(--muted); }
     const a = $('verify'); a.href = '#'; a.setAttribute('aria-disabled', 'true');
     $('record-facts').innerHTML = '';
     mark(-1);
-    renderLayers([]);
+    renderLayers([], new Set());
     $('status').textContent = frames.length ? `${frames.length} steps` : '';
   }
   let pace = 1300;
@@ -405,6 +519,14 @@ footer { font-size: 13px; color: var(--muted); }
     $('speed').setAttribute('aria-pressed', String(fast));
     $('speed').textContent = fast ? '1× speed' : '2× speed';
     if (timer) { clearInterval(timer); timer = null; play(); }
+  });
+  // The projector gets the light theme; the toggle is for anyone reading on a dark screen.
+  if (document.documentElement.dataset.theme === 'dark') { $('theme').textContent = 'Light theme'; $('theme').setAttribute('aria-pressed', 'true'); }
+  $('theme').addEventListener('click', () => {
+    const dark = document.documentElement.dataset.theme !== 'dark';
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    $('theme').setAttribute('aria-pressed', String(dark));
+    $('theme').textContent = dark ? 'Light theme' : 'Dark theme';
   });
   $('play').addEventListener('click', play);
   $('step').addEventListener('click', () => { stop(); if (index < frames.length - 1) show(index + 1); });
@@ -439,6 +561,7 @@ footer { font-size: 13px; color: var(--muted); }
     add('Key binding', r.container.keyBinding);
     add('Attestation', `enclave/runs/${r.name}/container-attestation.json`, `enclave/runs/${r.name}/container-attestation.json`);
     $('enclave-verify').href = r.verifyLink;
+    $('enclave-verify').hidden = false;
     $('enclave-run').hidden = false;
   }
 
@@ -504,10 +627,10 @@ footer { font-size: 13px; color: var(--muted); }
     viewer = new BpmnJS({
       container: '#canvas',
       bpmnRenderer: { defaultFillColor: css('--diagram-fill'), defaultStrokeColor: css('--diagram-stroke'), defaultLabelColor: css('--ink') },
-      textRenderer: { defaultStyle: { fontFamily: '"Source Sans 3", "Segoe UI", Arial, sans-serif', fontSize: 15 } },
+      textRenderer: { defaultStyle: { fontFamily: '"Barlow Condensed", "Arial Narrow", sans-serif', fontSize: 19, fontWeight: 700 } },
     });
     // bpmn-js wraps labels by measuring text; measure with the page's face, not a fallback.
-    try { await document.fonts.load('15px "Source Sans 3"'); await document.fonts.ready; } catch { /* fallback face */ }
+    try { await document.fonts.load('700 18px "Barlow Condensed"'); await document.fonts.ready; } catch { /* fallback face */ }
     const xml = await fetch('dataflow.bpmn').then((r) => r.text());
     await viewer.importXML(xml);
     // The pool is 1900 x 720; the margin keeps the bpmn.io mark clear of the end event.
@@ -518,7 +641,7 @@ footer { font-size: 13px; color: var(--muted); }
     };
     fit();
     addEventListener('resize', fit);
-    renderLayers([]);
+    renderLayers([], new Set());
 
     liveInfo = await detectLive();
     if (liveInfo) {
