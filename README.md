@@ -4,7 +4,7 @@ One question goes in. An analysis of open data comes out as a signed record that
 
 It is a worked example of [Civic AI Tools](https://github.com/npstorey/civic-ai-tools): one local command, a demo page, and a public record host on GitHub Pages.
 
-**The recorded run:** RECORD_LINK_PENDING
+**The recorded run:** "What were the five most reported crime types in Chicago in October 2026, and how many of each?" [Verify the signed record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-185729.bundle.json) · [Watch it replay](https://openmaxxing.typedstandards.org/) · [`records/run-20261107-185729.signed.json`](records/run-20261107-185729.signed.json)
 
 ## The eight layers
 

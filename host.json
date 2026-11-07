@@ -8,5 +8,15 @@
   "index": {
     "$comment": "The records this host serves: one per run of npm run ask that was committed."
   },
-  "records": []
+  "records": [
+    {
+      "name": "run-20261107-185729",
+      "signed": "records/run-20261107-185729.signed.json",
+      "attestations": [],
+      "title": "What were the five most reported crime types in Chicago in October 2026, and how many o...",
+      "extensions": {
+        "role": "analysis"
+      }
+    }
+  ]
 }

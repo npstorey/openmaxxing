@@ -1,12 +1,16 @@
 {
   "$comment": "The display policy: which records a page shows, and as what. It is this host's own rule, not signed and not verified. npm run ask sets signer to the did:key that signed.",
-  "signer": "did:key:unset",
+  "signer": "did:key:z6MkgpBekmFNk5qJFxXkLXxhpfHxtsRxwzRsXEurpkpXYxv9",
   "type": "content/analysis/v1",
   "display": [
     {
       "$comment": "An active analysis is shown as current.",
       "status": "active",
-      "extensions": { "role": ["analysis"] },
+      "extensions": {
+        "role": [
+          "analysis"
+        ]
+      },
       "as": "current"
     },
     {
