@@ -11,7 +11,7 @@
   "extensionKey": "org.typedstandards.openmaxxing.chain",
   "enclave": {
     "configRepo": "npstorey/openmaxxing-enclave",
-    "url": null
+    "url": "https://openmaxxing.openmaxxing.containers.tinfoil.dev"
   },
   "producerProfile": "ai-assisted-analysis/openmaxxing-v1",
   "captureMethod": "chat-flow-stream",
