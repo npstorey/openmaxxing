@@ -1,0 +1,19 @@
+{
+  "$comment": "The display policy: which records a page shows, and as what. It is this host's own rule, not signed and not verified. npm run ask sets signer to the did:key that signed.",
+  "signer": "did:key:unset",
+  "type": "content/analysis/v1",
+  "display": [
+    {
+      "$comment": "An active analysis is shown as current.",
+      "status": "active",
+      "extensions": { "role": ["analysis"] },
+      "as": "current"
+    },
+    {
+      "$comment": "A withdrawn record stays listed, marked withdrawn.",
+      "status": "withdrawn",
+      "as": "withdrawn"
+    }
+  ],
+  "unmatched": "refuse"
+}

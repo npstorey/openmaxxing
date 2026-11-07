@@ -1,0 +1,71 @@
+# Publish mode, after the Typed Standards host template's publish.yml.
+# On every push to main, and on demand, on Node 24:
+#   - npm ci installs the exact versions package-lock.json pins;
+#   - the served tree starts as a copy of docs/ (the demo page and each run's served
+#     files), and typedstandards-host build adds the bundles, the key registry and
+#     records.json from host.json and records/;
+#   - typedstandards-host verify verifies every record in that tree offline, and its
+#     output goes to the run summary;
+#   - display.mjs reads every record in the built index through host-policy.json;
+#   - the tree is uploaded, dotfiles included (.well-known/), and deployed to Pages.
+# A failed step deploys nothing. The job signs nothing: it holds no key and reads no
+# repository secret. Each action is pinned to a full commit SHA, with its tag in a comment.
+name: publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - run: npm ci
+      - name: Copy docs/, then typedstandards-host build into $RUNNER_TEMP/site
+        shell: bash
+        run: |
+          mkdir "$RUNNER_TEMP/site"
+          cp -R docs/. "$RUNNER_TEMP/site/"
+          npx typedstandards-host build --out "$RUNNER_TEMP/site"
+      - name: typedstandards-host verify, into the run summary
+        shell: bash
+        run: |
+          status=0
+          npx typedstandards-host verify --out "$RUNNER_TEMP/site" > "$RUNNER_TEMP/verify-output.txt" 2>&1 || status=$?
+          cat "$RUNNER_TEMP/verify-output.txt"
+          { echo '```'; cat "$RUNNER_TEMP/verify-output.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+      - name: node display.mjs, over the built index
+        run: node display.mjs "$RUNNER_TEMP/site/records.json"
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: ${{ runner.temp }}/site
+          include-hidden-files: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

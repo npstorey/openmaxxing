@@ -1,0 +1,29 @@
+{
+  "$comment": "Openmaxxing's own configuration. Every identity-bearing value the harness needs is stated here; none is the reference deployment's.",
+  "portal": "https://data.cityofchicago.org",
+  "model": "gpt-oss-120b",
+  "inferenceHost": "inference.tinfoil.sh",
+  "maxIterations": 8,
+  "maxToolResultChars": 12000,
+  "origin": "https://openmaxxing.github.io/openmaxxing",
+  "repository": "https://github.com/openmaxxing/openmaxxing",
+  "extensionKey": "io.github.openmaxxing.chain",
+  "producerProfile": "ai-assisted-analysis/openmaxxing-v1",
+  "captureMethod": "chat-flow-stream",
+  "platformAgent": {
+    "id": "openmaxxing",
+    "title": "Openmaxxing",
+    "url": "https://github.com/openmaxxing/openmaxxing"
+  },
+  "trace": {
+    "serviceName": "openmaxxing",
+    "scopeName": "openmaxxing-evidence",
+    "scopeVersion": "0.1.0",
+    "semconvVersion": "1.30.0"
+  },
+  "environmentHost": "openmaxxing.github.io",
+  "signer": {
+    "bindingTier": "pseudonymous",
+    "displayName": "openmaxxing"
+  }
+}

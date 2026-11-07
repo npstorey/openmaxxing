@@ -1,0 +1,6 @@
+node_modules/
+op.env
+.env*
+*.pem
+*.key
+/runs-scratch/
