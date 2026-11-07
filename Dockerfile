@@ -9,6 +9,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund
 COPY openmaxxing.config.json ./
 COPY src ./src
+COPY docs ./docs
 USER node
 EXPOSE 8080
 CMD ["node", "src/enclave.mjs"]

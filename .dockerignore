@@ -1,6 +1,8 @@
-# Only package.json, package-lock.json, openmaxxing.config.json and src/ enter the image.
+# Only package.json, package-lock.json, openmaxxing.config.json, src/ and docs/ (the demo page and its published runs) enter the image.
 *
 !package.json
 !package-lock.json
 !openmaxxing.config.json
 !src/**
+!docs/**
+docs/dataflow.png

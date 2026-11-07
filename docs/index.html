@@ -132,7 +132,7 @@ footer { font-size: 13px; color: var(--muted); }
 
   <section class="question" aria-label="Question">
     <div class="q" id="question">Loading the recorded run…</div>
-    <input id="ask-input" type="text" hidden placeholder="Ask a question about the portal's open data" aria-label="Question">
+    <input id="ask-input" type="text" hidden placeholder="e.g. What were the five most common 311 complaint types in NYC in October 2026?" aria-label="Question">
     <button class="primary" id="ask-btn" hidden>Ask</button>
   </section>
 
@@ -348,7 +348,9 @@ footer { font-size: 13px; color: var(--muted); }
     $('vc-badge').className = recorded ? 'badge recorded' : 'badge';
     $('vc-note').textContent = recorded
       ? 'This is the verification document Tinfoil\'s SDK produced when the recorded run connected. The Verification Center shows that document. It is not a live check.'
-      : 'This document comes from the connection this run just made, on this machine.';
+      : (liveInfo && liveInfo.where === 'enclave'
+        ? 'This document comes from the connection this enclave made to the model router for this run.'
+        : 'This document comes from the connection this run just made, on this machine.');
     postDoc();
   }
 
@@ -442,7 +444,9 @@ footer { font-size: 13px; color: var(--muted); }
 
   // Live mode: only when this page is served by npm run serve on this machine.
   async function detectLive() {
-    if (!['localhost', '127.0.0.1'].includes(location.hostname)) return false;
+    // On this machine (npm run serve), or inside Openmaxxing's Tinfoil Container.
+    const enclaveHost = location.hostname.endsWith('.containers.tinfoil.dev');
+    if (!['localhost', '127.0.0.1'].includes(location.hostname) && !enclaveHost) return false;
     try {
       const r = await fetch('/api/live', { cache: 'no-store' });
       if (!r.ok) return false;
@@ -465,6 +469,12 @@ footer { font-size: 13px; color: var(--muted); }
       headers: { 'Content-Type': 'application/json', 'X-Openmaxxing': '1' },
       body: JSON.stringify({ question }),
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+      $('status').textContent = err.error || `HTTP ${res.status}`;
+      $('ask-btn').disabled = false;
+      return;
+    }
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
@@ -513,7 +523,9 @@ footer { font-size: 13px; color: var(--muted); }
     liveInfo = await detectLive();
     if (liveInfo) {
       live = true;
-      $('mode').textContent = `Live: ${liveInfo.model} on ${liveInfo.portal}, your keys`;
+      $('mode').textContent = liveInfo.where === 'enclave'
+        ? `Live in a Tinfoil enclave: ${liveInfo.model} on ${liveInfo.portal} · ${liveInfo.remaining} questions left`
+        : `Live: ${liveInfo.model} on ${liveInfo.portal}, your keys`;
       $('mode').dataset.live = 'true';
       $('question').hidden = true;
       $('ask-input').hidden = false;
