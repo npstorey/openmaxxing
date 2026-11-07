@@ -26,7 +26,7 @@ networks:
 
 containers:
   - name: openmaxxing
-    image: "ghcr.io/npstorey/openmaxxing@sha256:ac9a1dd0c451c5f5f1dc8318e70accb000af635da84511e72792f6b9ea1c5450"
+    image: "ghcr.io/npstorey/openmaxxing@sha256:37dbd0dae1e53bfc86d64edaab43288a4395834c6b338fa5925c3a670ade5971"
     env:
       - OPENMAXXING_ENCLAVE_REPO: "npstorey/openmaxxing-enclave"
       - OPENMAXXING_WEB: "1"
