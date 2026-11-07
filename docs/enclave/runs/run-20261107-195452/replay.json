@@ -1,0 +1,314 @@
+{
+  "name": "run-20261107-195452",
+  "question": "What were the five most common 311 complaint types in New York City in October 2026, and how many of each?",
+  "answer": "**Top 5 NYC 311 complaint types in October 2026**\n\n| Rank | Complaint Type | Number of Calls |\n|------|----------------|-----------------|\n| 1 | Illegal Parking | 59,708 |\n| 2 | Noise – Residential | 35,425 |\n| 3 | HEAT/HOT WATER | 26,454 |\n| 4 | Blocked Driveway | 17,440 |\n| 5 | Noise – Street/Sidewalk | 16,813 |\n\n*Data source*: NYC 311 Service Requests dataset (`erm2-nwe9`) filtered to created_date from 2026‑10‑01 through 2026‑10‑31, grouped by complaint_type and ordered by count DESC (limit 5).",
+  "model": "gpt-oss-120b",
+  "servedModels": [
+    "gpt-oss-120b"
+  ],
+  "portal": "https://data.cityofnewyork.us",
+  "versions": {
+    "tinfoil": "1.4.0",
+    "router": "0.6.0",
+    "harness": "0.11.0",
+    "socrata": "0.9.2"
+  },
+  "envelopeHash": "219a397545ef35cd6e1b826fa2e56cfe8211014209fe3040404a12b349f0fb69",
+  "signer": "did:key:z6Mkv2VW37EjBZqMkFP4sAXMpoRztMXW4yEqh27P967WEY4m",
+  "verifyLink": "https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fenclave%2Fbundles%2Frun-20261107-195452.bundle.json",
+  "container": {
+    "url": "https://openmaxxing.openmaxxing.containers.tinfoil.dev",
+    "configRepo": "npstorey/openmaxxing-enclave",
+    "releaseTag": "v0.0.1",
+    "releaseDigest": "f112f9974d42408e628bfc0c582804b3a0dd26d395f88d3bd6d779bfc20918b4",
+    "keyBinding": "ok: the record's signing key is in the container's attestation"
+  },
+  "files": {
+    "answer": "enclave/runs/run-20261107-195452/answer.md",
+    "verification": "enclave/runs/run-20261107-195452/verification.json",
+    "systemPrompt": "enclave/runs/run-20261107-195452/system-prompt.md",
+    "containerVerification": "enclave/runs/run-20261107-195452/container-verification.json",
+    "bundle": "enclave/bundles/run-20261107-195452.bundle.json"
+  },
+  "events": [
+    {
+      "t": 397,
+      "step": "source",
+      "status": "connected",
+      "server": "pkg:npm/socrata-mcp-server@0.9.2",
+      "portal": "https://data.cityofnewyork.us"
+    },
+    {
+      "t": 419,
+      "step": "router",
+      "tools": [
+        "socrata__get_data",
+        "socrata__search",
+        "socrata__fetch"
+      ],
+      "promptChars": 27889,
+      "promptHash": "107ad4b3a502a95f30ce6dd8c2404071fe96fd453d0a7a32328ce1e458fa95ac"
+    },
+    {
+      "t": 1045,
+      "step": "attestation",
+      "securityVerified": true,
+      "configRepo": "tinfoilsh/confidential-model-router",
+      "enclaveHost": "inference.tinfoil.sh",
+      "releaseDigest": "95e49018369d59594468ed5af698631ba011937d3859fcbad21207eb0b0f9007",
+      "releaseTag": "v0.0.171",
+      "document": {
+        "schemaVersion": 1,
+        "configRepo": "tinfoilsh/confidential-model-router",
+        "enclaveHost": "inference.tinfoil.sh",
+        "releaseTag": "v0.0.171",
+        "releaseDigest": "95e49018369d59594468ed5af698631ba011937d3859fcbad21207eb0b0f9007",
+        "codeMeasurement": {
+          "type": "https://tinfoil.sh/predicate/snp-tdx-multiplatform/v1",
+          "registers": [
+            "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438"
+          ]
+        },
+        "enclaveMeasurement": {
+          "measurement": {
+            "type": "https://tinfoil.sh/predicate/sev-snp-guest/v2",
+            "registers": [
+              "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438"
+            ]
+          },
+          "tlsPublicKeyFingerprint": "c642d5523b0b344f3010ec727a724c10ed1ce8f58dc67f6545a063effeeac375",
+          "hpkePublicKey": "6d70995b0690c3a66f47f722abd7b28b4d845ef86873ba14930dea7585aaaa77"
+        },
+        "tlsPublicKey": "c642d5523b0b344f3010ec727a724c10ed1ce8f58dc67f6545a063effeeac375",
+        "hpkePublicKey": "6d70995b0690c3a66f47f722abd7b28b4d845ef86873ba14930dea7585aaaa77",
+        "codeFingerprint": "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438",
+        "enclaveFingerprint": "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438",
+        "selectedRouterEndpoint": "inference.tinfoil.sh",
+        "securityVerified": true,
+        "verifier": {
+          "name": "@tinfoilsh/verifier",
+          "version": "1.4.0"
+        },
+        "verifiedAt": "2026-11-07T19:54:53.749Z",
+        "steps": {
+          "fetchDigest": {
+            "status": "success"
+          },
+          "verifyCode": {
+            "status": "success"
+          },
+          "verifyEnclave": {
+            "status": "success"
+          },
+          "compareMeasurements": {
+            "status": "success"
+          },
+          "verifyCertificate": {
+            "status": "success"
+          }
+        }
+      }
+    },
+    {
+      "t": 1045,
+      "step": "model",
+      "status": "request",
+      "index": 0
+    },
+    {
+      "t": 3050,
+      "step": "tool",
+      "status": "call",
+      "name": "socrata__get_data",
+      "upstream": "get_data",
+      "args": {
+        "type": "query",
+        "dataset_id": "erm2-nwe9",
+        "limit": 1,
+        "select": "*"
+      }
+    },
+    {
+      "t": 33082,
+      "step": "tool",
+      "status": "error",
+      "name": "socrata__get_data",
+      "message": "Error: MCP error -32602: The portal data.cityofnewyork.us took too long to answer this request: this server waited 30 s for it and stopped, and did not send it again, so nothing from it is returned. A"
+    },
+    {
+      "t": 33083,
+      "step": "model",
+      "status": "request",
+      "index": 1
+    },
+    {
+      "t": 34402,
+      "step": "tool",
+      "status": "call",
+      "name": "socrata__get_data",
+      "upstream": "get_data",
+      "args": {
+        "type": "query",
+        "dataset_id": "erm2-nwe9",
+        "limit": 5,
+        "select": "*"
+      }
+    },
+    {
+      "t": 64414,
+      "step": "tool",
+      "status": "error",
+      "name": "socrata__get_data",
+      "message": "Error: MCP error -32602: The portal data.cityofnewyork.us took too long to answer this request: this server waited 30 s for it and stopped, and did not send it again, so nothing from it is returned. A"
+    },
+    {
+      "t": 64414,
+      "step": "model",
+      "status": "request",
+      "index": 2
+    },
+    {
+      "t": 66077,
+      "step": "tool",
+      "status": "call",
+      "name": "socrata__get_data",
+      "upstream": "get_data",
+      "args": {
+        "type": "query",
+        "dataset_id": "erm2-nwe9",
+        "select": "*",
+        "limit": 1
+      }
+    },
+    {
+      "t": 96098,
+      "step": "tool",
+      "status": "error",
+      "name": "socrata__get_data",
+      "message": "Error: MCP error -32602: The portal data.cityofnewyork.us took too long to answer this request: this server waited 30 s for it and stopped, and did not send it again, so nothing from it is returned. A"
+    },
+    {
+      "t": 96098,
+      "step": "model",
+      "status": "request",
+      "index": 3
+    },
+    {
+      "t": 98277,
+      "step": "tool",
+      "status": "call",
+      "name": "socrata__get_data",
+      "upstream": "get_data",
+      "args": {
+        "type": "query",
+        "dataset_id": "erm2-nwe9",
+        "limit": 5,
+        "select": "complaint_type, created_date",
+        "where": "created_date >= '2026-10-01T00:00:00' AND created_date < '2026-11-01T00:00:00'"
+      }
+    },
+    {
+      "t": 128292,
+      "step": "tool",
+      "status": "error",
+      "name": "socrata__get_data",
+      "message": "Error: MCP error -32602: The portal data.cityofnewyork.us took too long to answer this request: this server waited 30 s for it and stopped, and did not send it again, so nothing from it is returned. A"
+    },
+    {
+      "t": 128293,
+      "step": "model",
+      "status": "request",
+      "index": 4
+    },
+    {
+      "t": 131023,
+      "step": "tool",
+      "status": "call",
+      "name": "socrata__get_data",
+      "upstream": "get_data",
+      "args": {
+        "type": "query",
+        "dataset_id": "erm2-nwe9",
+        "select": "distinct complaint_type",
+        "where": "created_date >= '2026-10-01T00:00:00' AND created_date < '2026-11-01T00:00:00'",
+        "limit": 5
+      }
+    },
+    {
+      "t": 135339,
+      "step": "tool",
+      "status": "result",
+      "name": "socrata__get_data",
+      "bytes": 398,
+      "ms": 4316
+    },
+    {
+      "t": 135340,
+      "step": "model",
+      "status": "request",
+      "index": 5
+    },
+    {
+      "t": 136868,
+      "step": "tool",
+      "status": "call",
+      "name": "socrata__get_data",
+      "upstream": "get_data",
+      "args": {
+        "type": "query",
+        "dataset_id": "erm2-nwe9",
+        "select": "*",
+        "limit": 1
+      }
+    },
+    {
+      "t": 138896,
+      "step": "tool",
+      "status": "result",
+      "name": "socrata__get_data",
+      "bytes": 1791,
+      "ms": 2028
+    },
+    {
+      "t": 138897,
+      "step": "model",
+      "status": "request",
+      "index": 6
+    },
+    {
+      "t": 143567,
+      "step": "tool",
+      "status": "call",
+      "name": "socrata__get_data",
+      "upstream": "get_data",
+      "args": {
+        "type": "query",
+        "dataset_id": "erm2-nwe9",
+        "select": "complaint_type, COUNT(*) AS count",
+        "where": "created_date >= '2026-10-01T00:00:00' AND created_date < '2026-11-01T00:00:00'",
+        "group": "complaint_type",
+        "order": "count DESC",
+        "limit": 5
+      }
+    },
+    {
+      "t": 144465,
+      "step": "tool",
+      "status": "result",
+      "name": "socrata__get_data",
+      "bytes": 532,
+      "ms": 898
+    },
+    {
+      "t": 144465,
+      "step": "model",
+      "status": "request",
+      "index": 7
+    },
+    {
+      "t": 147495,
+      "step": "answer",
+      "chars": 502
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "configRepo": "npstorey/openmaxxing-enclave",
+  "enclaveHost": "openmaxxing.openmaxxing.containers.tinfoil.dev",
+  "releaseTag": "v0.0.1",
+  "releaseDigest": "f112f9974d42408e628bfc0c582804b3a0dd26d395f88d3bd6d779bfc20918b4",
+  "codeMeasurement": {
+    "type": "https://tinfoil.sh/predicate/snp-tdx-multiplatform/v1",
+    "registers": [
+      "a21e254cc4bef9ad908194eebe015774b7f92e13bbd3b8b266ed4f114dec83a9fc30b954c51499d3931441aa9bf62eda"
+    ]
+  },
+  "enclaveMeasurement": {
+    "measurement": {
+      "type": "https://tinfoil.sh/predicate/sev-snp-guest/v2",
+      "registers": [
+        "a21e254cc4bef9ad908194eebe015774b7f92e13bbd3b8b266ed4f114dec83a9fc30b954c51499d3931441aa9bf62eda"
+      ]
+    },
+    "tlsPublicKeyFingerprint": "f63b3ae96d3b41c8ca039be83f55838f399978b04f4e4a14fecb394faf62ae2b",
+    "hpkePublicKey": "9b1d8517260c7fadd2513899a1b7938dcd06ca7aafcf65458e354103a8d2e972"
+  },
+  "tlsPublicKey": "f63b3ae96d3b41c8ca039be83f55838f399978b04f4e4a14fecb394faf62ae2b",
+  "hpkePublicKey": "9b1d8517260c7fadd2513899a1b7938dcd06ca7aafcf65458e354103a8d2e972",
+  "codeFingerprint": "a21e254cc4bef9ad908194eebe015774b7f92e13bbd3b8b266ed4f114dec83a9fc30b954c51499d3931441aa9bf62eda",
+  "enclaveFingerprint": "a21e254cc4bef9ad908194eebe015774b7f92e13bbd3b8b266ed4f114dec83a9fc30b954c51499d3931441aa9bf62eda",
+  "selectedRouterEndpoint": "openmaxxing.openmaxxing.containers.tinfoil.dev",
+  "securityVerified": true,
+  "verifier": {
+    "name": "@tinfoilsh/verifier",
+    "version": "1.4.0"
+  },
+  "verifiedAt": "2026-11-07T19:54:53.670Z",
+  "steps": {
+    "fetchDigest": {
+      "status": "success"
+    },
+    "verifyCode": {
+      "status": "success"
+    },
+    "verifyEnclave": {
+      "status": "success"
+    },
+    "compareMeasurements": {
+      "status": "success"
+    },
+    "verifyCertificate": {
+      "status": "success"
+    }
+  }
+}

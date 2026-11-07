@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "configRepo": "tinfoilsh/confidential-model-router",
+  "enclaveHost": "inference.tinfoil.sh",
+  "releaseTag": "v0.0.171",
+  "releaseDigest": "95e49018369d59594468ed5af698631ba011937d3859fcbad21207eb0b0f9007",
+  "codeMeasurement": {
+    "type": "https://tinfoil.sh/predicate/snp-tdx-multiplatform/v1",
+    "registers": [
+      "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438"
+    ]
+  },
+  "enclaveMeasurement": {
+    "measurement": {
+      "type": "https://tinfoil.sh/predicate/sev-snp-guest/v2",
+      "registers": [
+        "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438"
+      ]
+    },
+    "tlsPublicKeyFingerprint": "c642d5523b0b344f3010ec727a724c10ed1ce8f58dc67f6545a063effeeac375",
+    "hpkePublicKey": "6d70995b0690c3a66f47f722abd7b28b4d845ef86873ba14930dea7585aaaa77"
+  },
+  "tlsPublicKey": "c642d5523b0b344f3010ec727a724c10ed1ce8f58dc67f6545a063effeeac375",
+  "hpkePublicKey": "6d70995b0690c3a66f47f722abd7b28b4d845ef86873ba14930dea7585aaaa77",
+  "codeFingerprint": "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438",
+  "enclaveFingerprint": "f5bcc220a94d5c34c5c80db9593dcc88d7d1a19b43796c05ec4b6cdcf921c8176a56cb3d0224650b1250ee892a0ec438",
+  "selectedRouterEndpoint": "inference.tinfoil.sh",
+  "securityVerified": true,
+  "verifier": {
+    "name": "@tinfoilsh/verifier",
+    "version": "1.4.0"
+  },
+  "verifiedAt": "2026-11-07T19:54:53.749Z",
+  "steps": {
+    "fetchDigest": {
+      "status": "success"
+    },
+    "verifyCode": {
+      "status": "success"
+    },
+    "verifyEnclave": {
+      "status": "success"
+    },
+    "compareMeasurements": {
+      "status": "success"
+    },
+    "verifyCertificate": {
+      "status": "success"
+    }
+  }
+}

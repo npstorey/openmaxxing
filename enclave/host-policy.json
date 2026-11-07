@@ -1,6 +1,6 @@
 {
   "$comment": "The enclave host's display policy. npm run ask:enclave sets signer to the did:key the enclave signed with.",
-  "signer": "did:key:unset",
+  "signer": "did:key:z6Mkv2VW37EjBZqMkFP4sAXMpoRztMXW4yEqh27P967WEY4m",
   "type": "content/analysis/v1",
   "display": [
     {

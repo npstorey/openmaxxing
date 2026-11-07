@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-11-07T19:57:25Z",
+  "enclave": "openmaxxing.openmaxxing.containers.tinfoil.dev",
+  "repo": "npstorey/openmaxxing-enclave",
+  "digest": "f112f9974d42408e628bfc0c582804b3a0dd26d395f88d3bd6d779bfc20918b4",
+  "measurements": {
+    "sigstore": {
+      "type": "https://tinfoil.sh/predicate/sev-snp-guest/v2",
+      "registers": [
+        "a21e254cc4bef9ad908194eebe015774b7f92e13bbd3b8b266ed4f114dec83a9fc30b954c51499d3931441aa9bf62eda"
+      ]
+    },
+    "enclave": {
+      "type": "https://tinfoil.sh/predicate/sev-snp-guest/v2",
+      "registers": [
+        "a21e254cc4bef9ad908194eebe015774b7f92e13bbd3b8b266ed4f114dec83a9fc30b954c51499d3931441aa9bf62eda"
+      ]
+    }
+  },
+  "keys": {
+    "enclave": "f63b3ae96d3b41c8ca039be83f55838f399978b04f4e4a14fecb394faf62ae2b",
+    "connection": "f63b3ae96d3b41c8ca039be83f55838f399978b04f4e4a14fecb394faf62ae2b"
+  },
+  "crypto_material": [
+    {
+      "id": "tls",
+      "format": "https://tinfoil.sh/key/spki-fp-sha256/v1",
+      "data": "f63b3ae96d3b41c8ca039be83f55838f399978b04f4e4a14fecb394faf62ae2b"
+    },
+    {
+      "id": "hpke",
+      "format": "https://tinfoil.sh/key/x25519-hpke/v1",
+      "data": "9b1d8517260c7fadd2513899a1b7938dcd06ca7aafcf65458e354103a8d2e972"
+    },
+    {
+      "id": "record-signing",
+      "format": "https://tinfoil.sh/key/spki/v1",
+      "data": "302a300506032b6570032100e762af6fe9d58f79183a8bfd61149053b70dc87cbc91d423f0b15f360900720e"
+    }
+  ],
+  "freshness_expires_at": "2026-11-13T17:01:33-05:00",
+  "status": "ok"
+}
