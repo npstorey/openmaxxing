@@ -1,10 +1,28 @@
 # Openmaxxing
 
-One question goes in. An analysis of open data comes out as a signed record that anyone can check. Every layer between the question and the record is open: the code, the harness, both routers, the model's weights, the inference enclave, the data and the record format.
+[![Publish](https://github.com/npstorey/openmaxxing/actions/workflows/publish.yml/badge.svg)](https://github.com/npstorey/openmaxxing/actions/workflows/publish.yml) [![Build Image](https://github.com/npstorey/openmaxxing/actions/workflows/build-image.yml/badge.svg)](https://github.com/npstorey/openmaxxing/actions/workflows/build-image.yml)
 
-It is a worked example of [Civic AI Tools](https://github.com/npstorey/civic-ai-tools): one local command, a demo page, and a public record host on GitHub Pages.
+One question in. One signed record out. Every layer open.
 
-**The recorded run:** "What were the five most common 311 complaint types in New York City in October 2026, and how many of each?" [Verify the signed record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-192101.bundle.json) · [Watch it replay](https://openmaxxing.typedstandards.org/) · [`records/run-20261107-192101.signed.json`](records/run-20261107-192101.signed.json). **The same question, run and signed inside a Tinfoil Container:** [verify the enclave-signed record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fenclave%2Fbundles%2Frun-20261107-195452.bundle.json) ([below](#the-chain-inside-a-tinfoil-container)). An earlier record asks the same of Chicago's portal: [verify it](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-185729.bundle.json).
+**[Live demo](https://openmaxxing.typedstandards.org/#demo) · Video: link added when the recording is posted · [Verify the record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-192101.bundle.json)**
+
+[![The demo page: the question, the answer with its two verify buttons, and the 8/8 open stat card](docs/screenshot.png)](https://openmaxxing.typedstandards.org/)
+
+Built on 2026-11-07. The list of what was written that day is in [Built today](#built-today).
+
+An analysis of open data comes out as a signed record that anyone can check. Every layer between the question and the record is open: the code, the harness, both routers, the model's weights, the inference enclave, the data and the record format. It is a worked example of [Civic AI Tools](https://github.com/npstorey/civic-ai-tools): one local command, a demo page, a public record host on GitHub Pages, and the same chain inside a Tinfoil Container.
+
+## See it in ninety seconds
+
+1. Open the [live demo](https://openmaxxing.typedstandards.org/#demo) and press **Next** through the run, or **Play** on the [plain page](https://openmaxxing.typedstandards.org/).
+2. Press **Verify this record**. typedstandards.org fetches the signed bundle from this site and checks the hash, the signature and the key in your browser.
+3. Read [what the record proves and what it does not](#what-this-record-proves--what-it-does-not).
+
+| Run | Portal | Signed by | Verify |
+|---|---|---|---|
+| Top five 311 complaint types in NYC, October 2026 | `data.cityofnewyork.us` | This site's `did:key` (`z6MkgpBe…pXYxv9`) | [Verify](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-192101.bundle.json) |
+| The same question, run inside the Tinfoil Container | `data.cityofnewyork.us` | The enclave's key (`z6Mkv2VW…7WEY4m`) | [Verify](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fenclave%2Fbundles%2Frun-20261107-195452.bundle.json) |
+| Top five crime types in Chicago, October 2026 (the earlier run) | `data.cityofchicago.org` | This site's `did:key` | [Verify](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-185729.bundle.json) |
 
 ## The eight layers
 
@@ -34,62 +52,6 @@ The diagram is [`docs/dataflow.bpmn`](docs/dataflow.bpmn), BPMN 2.0. The demo pa
 5. When the model answers, the harness derives the record's fields from the trace, and the Typed Standards CLI signs the record and checks it.
 6. A push publishes it: the workflow builds, verifies and deploys the site. Anyone can verify the record.
 
-## The chain inside a Tinfoil Container
-
-The same chain also runs inside a [Tinfoil Container](https://docs.tinfoil.sh/containers/overview.md), and the enclave signs the record with a key it generated itself.
-
-- **The code it runs.** [`src/enclave.mjs`](src/enclave.mjs), built from this repository's public source by [`build-image.yml`](.github/workflows/build-image.yml) into `ghcr.io/npstorey/openmaxxing@sha256:ac9a1dd0c451c5f5f1dc8318e70accb000af635da84511e72792f6b9ea1c5450`.
-- **The measured config.** [`npstorey/openmaxxing-enclave`](https://github.com/npstorey/openmaxxing-enclave) pins that image by digest, release `v0.0.1`. Its source here is [`enclave/tinfoil-config.yml`](enclave/tinfoil-config.yml). Egress is an allowlist of three hosts: `atc.tinfoil.sh`, `inference.tinfoil.sh` and `data.cityofnewyork.us`.
-- **The signing key.** `attested-keys: record-signing` (Ed25519) is generated inside the enclave on each deploy and never leaves it. Its public key is published in the enclave's attestation (`crypto_material`, format `https://tinfoil.sh/key/spki/v1`).
-- **The client.** `op run --env-file=op.env -- npm run ask:enclave -- "<question>"` verifies the container's enclave with Tinfoil's SecureClient before it sends anything. It then calls `/ask` with a bearer token, so only the operator can spend the inference credits. It runs `tinfoil attestation verify -j` and checks that the record's signing key is the attested key: the recorded run printed `key binding: ok`.
-- **The site, served from the enclave.** From release `v0.0.3`, a second instance serves the demo page itself at https://web.openmaxxing.containers.tinfoil.dev. A visitor's question runs inside the enclave and is signed by that instance's key. The record is then served from the enclave under `/live`, so typedstandards.org verifies it from there. Public questions are capped at 30 per instance and three per visitor every ten minutes. Records made there live in memory and are gone on restart.
-- **Where the records live.** host-core 0.1.3 serves one key per registry, so records signed in the enclave have their own host at [`/enclave`](https://openmaxxing.typedstandards.org/enclave/records.json). Each run also serves the container's attestation (`container-attestation.json`) and the SecureClient's verification document (`container-verification.json`) beside the record, under [`docs/enclave/runs/`](docs/enclave/runs/).
-
-## Prerequisites
-
-- Node 22 or later, and npm.
-- The [1Password CLI](https://developer.1password.com/docs/cli/), signed in (`op signin`). Credentials reach the process only through `op run --env-file`, which resolves `op://` references for one command. Nothing in this repository holds or prints a secret.
-- A Tinfoil API key, from [tinfoil.sh](https://tinfoil.sh), stored in 1Password.
-- A signing seed for your own `did:key`: 32 random bytes, made with `openssl rand -base64 32` and stored straight into 1Password. The seed is the only way to sign under your identifier, and a `did:key` cannot be rotated.
-- Optional: a Socrata app token, for higher rate limits.
-
-## From clone to verified record
-
-```sh
-git clone https://github.com/npstorey/openmaxxing && cd openmaxxing && npm ci
-op run --env-file=op.env -- npm run ask -- "What were the five most common 311 complaint types in New York City in October 2026, and how many of each?"
-npm run verify
-```
-
-Before the second command, copy [`op.env.example`](op.env.example) to `op.env` (gitignored) and point its references at your own 1Password items. The file holds `op://` references only.
-
-`npm run ask` prints each step, the answer, the path of the signed record and its verify link. It writes:
-
-| Path | What |
-|---|---|
-| `records/<run>.input.json` | The envelope input the harness derived |
-| `records/<run>.signed.json` | The signed record, as the CLI printed it |
-| `docs/runs/<run>/answer.md` | The answer, signed inline under `raw-bytes/v1` |
-| `docs/runs/<run>/verification.json` | Tinfoil's verification document from `client.getVerificationDocument()` |
-| `docs/runs/<run>/system-prompt.md` | The composed system prompt |
-| `docs/runs/<run>/replay.json` | The run's steps and timing, for the demo page |
-
-`npm run verify` runs what the publish workflow runs, offline: it builds the site into a temporary directory, verifies every record with the network blocked, and checks each served file against the SHA-256 its record signs.
-
-To publish, set `origin` in `host.json` and `openmaxxing.config.json` to your Pages URL, turn on Pages with "GitHub Actions" as the source, then commit the run's files and push. [`publish.yml`](.github/workflows/publish.yml) builds, verifies and deploys; it holds no key and reads no secret.
-
-### The demo page
-
-Add `#demo` to the address, or press **Present**, to walk through the run one beat at a time: Next and Prev, or the arrow keys, Space and Page Up/Down, which is what a presentation clicker sends. Escape leaves.
-
-
-```sh
-npm run serve                                # replay only: no keys in the environment
-op run --env-file=op.env -- npm run serve    # live mode on http://localhost:8787, with your keys
-```
-
-Public mode, on the Pages site, replays one real signed run step by step and holds no key. Live mode runs only when the page is served by `npm run serve` on your machine; the server listens on `127.0.0.1` only. Both end on the record's verify link. Beside the diagram, Tinfoil's [Verification Center](https://docs.tinfoil.sh/guides/verification-center.md) can show the verification document: in public mode that is the recorded run's document, not a live check.
-
 ## What this record proves / what it does not
 
 **Attested**: checkable by anyone from the signed bundle, or from a served file against the hash the record signs.
@@ -112,12 +74,68 @@ Public mode, on the Pages site, replays one real signed run step by step and hol
 | Freshness of the attestation | Not covered | The JavaScript verifier does not implement the freshness witness or revocation checks, and `verifiedAt` is the local clock, not an attested time ([JavaScript SDK](https://docs.tinfoil.sh/sdk/javascript-sdk.md)). The record names `releaseDigest`, so a reader can compare it with the release they expect. |
 | The program that built the record, run locally | Asserted | The record names each package and version. Nothing attests the machine that ran `npm run ask`. |
 | The enclave record was signed inside the container | Attested, against the attestation | The record's `signature.publicKey` is the `record-signing` key in the container's attestation. `container-attestation.json` is served beside the record, and its `crypto_material` entry holds the same SPKI bytes in hex. A new key is made on every deploy, so the binding names one deploy. The attestation file is the producer's capture; `tinfoil attestation verify` re-checks it while that deploy runs. |
-| The container runs the published config and image | Tinfoil's statement, at run time | SecureClient and the Tinfoil CLI matched the enclave's measurement to release `v0.0.1` of `npstorey/openmaxxing-enclave`, which pins the image by digest. Whether that image is byte-for-byte what `build-image.yml` builds from this source is not checked; the build was not made reproducible. |
+| The container runs the published config and image | Tinfoil's statement, at run time | SecureClient and the Tinfoil CLI matched the enclave's measurement to the release of `npstorey/openmaxxing-enclave` named in that run's attestation (`v0.0.1` for the recorded run), which pins the image by digest. Whether that image is byte-for-byte what `build-image.yml` builds from this source is not checked; the build was not made reproducible. |
 | The container's secrets | Not covered | The Tinfoil key, the Socrata token and the ask token are Tinfoil organization secrets. Tinfoil's [private secrets](https://docs.tinfoil.sh/containers/private-secrets.md), which Tinfoil never sees, need a keyserver and were not used. |
 | Capture method and producer profile | Asserted (#15) | `chat-flow-stream` under `ai-assisted-analysis/openmaxxing-v1`: signed labels, checked by nothing. |
 | When the record existed | Not covered | #7 does not apply: no RFC 3161 token was requested. `createdAt` is the signer's claim. |
 | Inclusion in a transparency log | Not covered | #8 does not apply. |
 | That the answer is correct | Not covered | A signature shows the bytes are unchanged since signing, not that they are true. |
+
+## Run it yourself
+
+Three commands, from clone to a verified record of your own. You need Node 22 or later and npm, the [1Password CLI](https://developer.1password.com/docs/cli/) signed in, a Tinfoil API key from [tinfoil.sh](https://tinfoil.sh), and a signing seed for your own `did:key`. A Socrata app token is optional and raises rate limits.
+
+```sh
+git clone https://github.com/npstorey/openmaxxing && cd openmaxxing && npm ci
+op run --env-file=op.env -- npm run ask -- "What were the five most common 311 complaint types in New York City in October 2026, and how many of each?"
+npm run verify
+```
+
+<details>
+<summary>Keys through 1Password, and what each command writes</summary>
+
+Credentials reach the process only through `op run --env-file`, which resolves `op://` references for one command. Nothing in this repository holds or prints a secret. Before the second command, copy [`op.env.example`](op.env.example) to `op.env` (gitignored) and point its references at your own 1Password items.
+
+The signing seed is 32 random bytes, made with `openssl rand -base64 32` and stored straight into 1Password. It is the only way to sign under your identifier, and a `did:key` cannot be rotated.
+
+`npm run ask` prints each step, the answer, the path of the signed record and its verify link. It writes:
+
+| Path | What |
+|---|---|
+| `records/<run>.input.json` | The envelope input the harness derived |
+| `records/<run>.signed.json` | The signed record, as the CLI printed it |
+| `docs/runs/<run>/answer.md` | The answer, signed inline under `raw-bytes/v1` |
+| `docs/runs/<run>/verification.json` | Tinfoil's verification document from `client.getVerificationDocument()` |
+| `docs/runs/<run>/system-prompt.md` | The composed system prompt |
+| `docs/runs/<run>/replay.json` | The run's steps and timing, for the demo page |
+
+`npm run verify` runs what the publish workflow runs, offline: it builds the site into a temporary directory, verifies every record with the network blocked, and checks each served file against the SHA-256 its record signs.
+
+To publish, set `origin` in `host.json` and `openmaxxing.config.json` to your Pages URL, turn on Pages with "GitHub Actions" as the source, then commit the run's files and push. [`publish.yml`](.github/workflows/publish.yml) builds, verifies and deploys; it holds no key and reads no secret.
+
+</details>
+
+### The demo page
+
+Add `#demo` to the address, or press **Present**, to walk through the run one beat at a time: Next and Prev, or the arrow keys, Space and Page Up/Down, which is what a presentation clicker sends. Escape leaves.
+
+```sh
+npm run serve                                # replay only: no keys in the environment
+op run --env-file=op.env -- npm run serve    # live mode on http://localhost:8787, with your keys
+```
+
+Public mode, on the Pages site, replays one real signed run step by step and holds no key. Live mode runs only when the page is served by `npm run serve` on your machine; the server listens on `127.0.0.1` only. Both end on the record's verify link. Beside the diagram, Tinfoil's [Verification Center](https://docs.tinfoil.sh/guides/verification-center.md) can show the verification document: in public mode that is the recorded run's document, not a live check.
+
+## The chain inside a Tinfoil Container
+
+The same chain also runs inside a [Tinfoil Container](https://docs.tinfoil.sh/containers/overview.md), and the enclave signs the record with a key it generated itself.
+
+- **The code it runs.** [`src/enclave.mjs`](src/enclave.mjs), built from this repository's public source by [`build-image.yml`](.github/workflows/build-image.yml).
+- **The measured config.** [`npstorey/openmaxxing-enclave`](https://github.com/npstorey/openmaxxing-enclave) pins the image by digest. The recorded enclave run was signed under release `v0.0.1`, image `ghcr.io/npstorey/openmaxxing@sha256:ac9a1dd0c451c5f5f1dc8318e70accb000af635da84511e72792f6b9ea1c5450`. The current config, release `v0.0.3` with image `sha256:1c2916e74230a0f88f69f3b374415591d72af76b4e5ed87e74fc62d5741eb271`, also serves the demo page and the capped public ask. Its source here is [`enclave/tinfoil-config.yml`](enclave/tinfoil-config.yml). Egress is an allowlist of three hosts: `atc.tinfoil.sh`, `inference.tinfoil.sh` and `data.cityofnewyork.us`.
+- **The signing key.** `attested-keys: record-signing` (Ed25519) is generated inside the enclave on each deploy and never leaves it. Its public key is published in the enclave's attestation (`crypto_material`, format `https://tinfoil.sh/key/spki/v1`).
+- **The client.** `op run --env-file=op.env -- npm run ask:enclave -- "<question>"` verifies the container's enclave with Tinfoil's SecureClient before it sends anything. It then calls `/ask` with a bearer token, so only the operator can spend the inference credits. It runs `tinfoil attestation verify -j` and checks that the record's signing key is the attested key: the recorded run printed `key binding: ok`.
+- **The site, served from the enclave.** From release `v0.0.3`, a second instance serves the demo page itself at https://web.openmaxxing.containers.tinfoil.dev. A visitor's question runs inside the enclave and is signed by that instance's key. The record is then served from the enclave under `/live`, so typedstandards.org verifies it from there. Public questions are capped at 30 per instance and three per visitor every ten minutes. Records made there live in memory and are gone on restart.
+- **Where the records live.** host-core 0.1.3 serves one key per registry, so records signed in the enclave have their own host at [`/enclave`](https://openmaxxing.typedstandards.org/enclave/records.json). Each run also serves the container's attestation (`container-attestation.json`) and the SecureClient's verification document (`container-verification.json`) beside the record, under [`docs/enclave/runs/`](docs/enclave/runs/).
 
 ## Next
 
@@ -127,7 +145,10 @@ Public mode, on the Pages site, replays one real signed run step by step and hol
 
 ## Prior work
 
-Openmaxxing depends on these published packages at exact versions. It forks and vendors none of them.
+Openmaxxing depends on published packages at exact versions. It forks and vendors none of them. The publish workflow follows the Typed Standards [host template](https://github.com/npstorey/typedstandards-host-template)'s publish mode.
+
+<details>
+<summary>The packages, their versions and licenses</summary>
 
 | Package | Version | What it does here | License |
 |---|---|---|---|
@@ -137,11 +158,11 @@ Openmaxxing depends on these published packages at exact versions. It forks and 
 | [`@typedstandards/produce-core`](https://www.npmjs.com/package/@typedstandards/produce-core) | 0.9.1 | Envelope assembly, under the CLI and the harness | MIT |
 | [`@typedstandards/host-core`](https://www.npmjs.com/package/@typedstandards/host-core) | 0.1.3 | Builds the served bundles, the key registry and the index; verifies them offline | MIT |
 | [`socrata-mcp-server`](https://www.npmjs.com/package/socrata-mcp-server) | 0.9.2 | The open-data MCP server | MIT |
-| [`tinfoil`](https://www.npmjs.com/package/tinfoil) | 1.4.0 | Tinfoil's JS SDK: `TinfoilAI`, attestation, `getVerificationDocument()` | Apache-2.0 |
+| [`tinfoil`](https://www.npmjs.com/package/tinfoil) | 1.4.0 | Tinfoil's JS SDK: `TinfoilAI`, `SecureClient`, attestation, `getVerificationDocument()` | Apache-2.0 |
 | [`@modelcontextprotocol/sdk`](https://www.npmjs.com/package/@modelcontextprotocol/sdk) | 1.32.2 | The MCP client over stdio | MIT |
 | [`bpmn-js`](https://bpmn.io/toolkit/bpmn-js/) | 18.31.0 | Renders the diagram on the demo page, from a pinned CDN build | bpmn.io license |
 
-The publish workflow follows the Typed Standards [host template](https://github.com/npstorey/typedstandards-host-template)'s publish mode.
+</details>
 
 ## Built today
 
@@ -150,20 +171,28 @@ Written on 2026-11-07:
 - `src/chain.mjs`: the loop. Source router, Tinfoil, `resolveCalledName`, Socrata, with every step on a harness trace.
 - `src/record.mjs`: the harness derives the fields; the CLI signs and checks; Tinfoil's verification document and the composed prompt are served beside the record and named by hash.
 - `src/ask.mjs`, `src/verify.mjs`, `src/serve.mjs`: the three commands.
-- `docs/dataflow.bpmn` and `docs/index.html`: the diagram and the demo page, with replay and live modes.
+- `docs/dataflow.bpmn` and `docs/index.html`: the diagram and the demo page, with replay, live and present modes.
 - `.github/workflows/publish.yml`, `host.json`, `host-policy.json`, `display.mjs`: this repository as its own record host.
 - `src/enclave.mjs`, `Dockerfile`, `build-image.yml`, `enclave/`, `src/ask-enclave.mjs`: the chain in a Tinfoil Container, its config, and the client that verifies it and files its records.
 
 ## Layout
 
+Every file in `src/` opens with a comment saying what it does.
+
+<details>
+<summary>Where things are</summary>
+
 | Path | What |
 |---|---|
 | `openmaxxing.config.json` | Portal, model, origin, and this instance's own identity for the harness |
-| `src/` | The chain, the record, the commands |
+| `src/` | The chain, the record, the commands, the enclave server |
 | `records/` | Envelope inputs and signed records |
+| `enclave/` | The Tinfoil config source, and the enclave host's records |
 | `docs/` | The demo page, the diagram, and each run's served files |
 | `host.json`, `host-policy.json` | What the site serves, and its display policy |
 | `op.env.example` | The `op://` references a run needs |
+
+</details>
 
 ## License
 

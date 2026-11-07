@@ -10,7 +10,7 @@
 #   - the tree is uploaded, dotfiles included (.well-known/), and deployed to Pages.
 # A failed step deploys nothing. The job signs nothing: it holds no key and reads no
 # repository secret. Each action is pinned to a full commit SHA, with its tag in a comment.
-name: publish
+name: Publish
 
 on:
   push:

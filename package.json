@@ -2,7 +2,7 @@
   "name": "openmaxxing",
   "version": "0.1.0",
   "private": true,
-  "description": "One question in, one signed record out: every layer of the chain is open.",
+  "description": "One question in. One signed record out. Every layer open.",
   "license": "MIT",
   "author": "Nathan Storey",
   "type": "module",
