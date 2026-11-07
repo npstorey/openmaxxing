@@ -9,6 +9,10 @@
   "origin": "https://openmaxxing.typedstandards.org",
   "repository": "https://github.com/npstorey/openmaxxing",
   "extensionKey": "org.typedstandards.openmaxxing.chain",
+  "enclave": {
+    "configRepo": "npstorey/openmaxxing-enclave",
+    "url": null
+  },
   "producerProfile": "ai-assisted-analysis/openmaxxing-v1",
   "captureMethod": "chat-flow-stream",
   "platformAgent": {

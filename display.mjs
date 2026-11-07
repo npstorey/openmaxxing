@@ -4,7 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { displayOf, parseIndex, parsePolicy } from '@typedstandards/host-core';
 
-const policy = parsePolicy(JSON.parse(readFileSync('host-policy.json', 'utf8')));
+const policy = parsePolicy(JSON.parse(readFileSync(process.argv[3] ?? 'host-policy.json', 'utf8')));
 const index = parseIndex(JSON.parse(readFileSync(process.argv[2] ?? 'site/records.json', 'utf8')));
 
 let refused = 0;

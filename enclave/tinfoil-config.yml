@@ -1,0 +1,44 @@
+# Tinfoil Container configuration for Openmaxxing. This file is the source for
+# tinfoil-config.yml in the public config repository npstorey/openmaxxing-enclave;
+# Tinfoil measures that copy and publishes the measurement.
+# For updates: edit, commit to the config repository, then run Tinfoil Release.
+cvm-version: 0.14.7
+cpus: 2
+memory: 4096
+
+# Ed25519 key generated inside the enclave on every deploy. Its public key is in
+# the enclave's attestation; the private key never leaves the enclave.
+attested-keys:
+  - id: record-signing
+    key: ed25519
+    uid: 1000
+    gid: 1000
+
+networks:
+  egress:
+    egress: allowlist
+    allow:
+      - atc.tinfoil.sh            # Tinfoil's attestation bundle for the model router
+      - inference.tinfoil.sh      # the model router, pinned in openmaxxing.config.json
+      - data.cityofnewyork.us     # the Socrata portal
+
+containers:
+  - name: openmaxxing
+    image: "ghcr.io/npstorey/openmaxxing@sha256:IMAGE_DIGEST"
+    env:
+      - OPENMAXXING_ENCLAVE_REPO: "npstorey/openmaxxing-enclave"
+    secrets:
+      - TINFOIL_API_KEY
+      - SOCRATA_APP_TOKEN
+      - OPENMAXXING_ASK_TOKEN
+    keys: [record-signing]
+    networks: [egress]
+    tmpfs:
+      /tmp: "size=256m"
+
+shim:
+  upstream-port: 8080
+  paths:
+    - /health
+    - /identity
+    - /ask

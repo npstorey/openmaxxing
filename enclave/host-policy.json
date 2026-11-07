@@ -1,0 +1,23 @@
+{
+  "$comment": "The enclave host's display policy. npm run ask:enclave sets signer to the did:key the enclave signed with.",
+  "signer": "did:key:unset",
+  "type": "content/analysis/v1",
+  "display": [
+    {
+      "$comment": "An active analysis is shown as current.",
+      "status": "active",
+      "extensions": {
+        "role": [
+          "analysis"
+        ]
+      },
+      "as": "current"
+    },
+    {
+      "$comment": "A withdrawn record stays listed, marked withdrawn.",
+      "status": "withdrawn",
+      "as": "withdrawn"
+    }
+  ],
+  "unmatched": "refuse"
+}

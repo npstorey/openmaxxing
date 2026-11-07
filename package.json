@@ -15,7 +15,8 @@
     "verify": "node src/verify.mjs",
     "build": "typedstandards-host build",
     "links": "typedstandards-host links",
-    "display": "node display.mjs"
+    "display": "node display.mjs",
+    "ask:enclave": "node src/ask-enclave.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.2",

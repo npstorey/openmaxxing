@@ -1,0 +1,12 @@
+{
+  "$comment": "The enclave host: records signed inside Openmaxxing's Tinfoil Container, under the key the enclave generated. host-core serves one key per registry, so these records have their own host under /enclave. npm run ask:enclave appends one entry per record.",
+  "origin": "https://openmaxxing.typedstandards.org/enclave",
+  "visibility": "public",
+  "registry": {
+    "$comment": "Openmaxxing's statement about the key its Tinfoil Container generated and signs with. The key is generated inside the enclave on each deploy and never leaves it; its public key is in the container's attestation. This registry is not a Typed Standards record, and not an endorsement by the Typed Standards specification or by typedstandards.org, although this host is a subdomain of it."
+  },
+  "index": {
+    "$comment": "The records signed inside the container."
+  },
+  "records": []
+}

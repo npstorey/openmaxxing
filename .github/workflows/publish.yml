@@ -42,16 +42,28 @@ jobs:
           mkdir "$RUNNER_TEMP/site"
           cp -R docs/. "$RUNNER_TEMP/site/"
           npx typedstandards-host build --out "$RUNNER_TEMP/site"
+          # The enclave host: records signed inside the Tinfoil Container, under its own key.
+          if node -e "process.exit(require('./enclave/host.json').records.length ? 0 : 1)"; then
+            npx typedstandards-host build --manifest enclave/host.json --out "$RUNNER_TEMP/site/enclave"
+          fi
       - name: typedstandards-host verify, into the run summary
         shell: bash
         run: |
           status=0
           npx typedstandards-host verify --out "$RUNNER_TEMP/site" > "$RUNNER_TEMP/verify-output.txt" 2>&1 || status=$?
+          if [ -f "$RUNNER_TEMP/site/enclave/records.json" ]; then
+            npx typedstandards-host verify --out "$RUNNER_TEMP/site/enclave" >> "$RUNNER_TEMP/verify-output.txt" 2>&1 || status=$?
+          fi
           cat "$RUNNER_TEMP/verify-output.txt"
           { echo '```'; cat "$RUNNER_TEMP/verify-output.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           exit "$status"
       - name: node display.mjs, over the built index
-        run: node display.mjs "$RUNNER_TEMP/site/records.json"
+        shell: bash
+        run: |
+          node display.mjs "$RUNNER_TEMP/site/records.json"
+          if [ -f "$RUNNER_TEMP/site/enclave/records.json" ]; then
+            node display.mjs "$RUNNER_TEMP/site/enclave/records.json" enclave/host-policy.json
+          fi
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: ${{ runner.temp }}/site
