@@ -116,6 +116,9 @@ table.layers tr.on td.n { color: var(--accent); }
 .record dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; font-size: 13.5px; margin: 0; }
 .record dt { color: var(--muted); }
 .record dd { margin: 0; font: 12.5px/1.5 var(--font-mono); overflow-wrap: anywhere; }
+.enclave-run { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--rule); display: grid; gap: 8px; }
+.enclave-run h3 { margin: 0; font: 600 15px/1.3 var(--font-body); }
+.enclave-run .verify-2 { display: block; text-align: center; text-decoration: none; padding: 10px; border-radius: 8px; border: 2px solid var(--ok); color: var(--ok); font: 700 15px/1.2 var(--font-display); }
 footer { font-size: 13px; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .djs-container .djs-visual > * { transition: none; } }
 </style>
@@ -173,6 +176,12 @@ footer { font-size: 13px; color: var(--muted); }
       <a class="verify" id="verify" href="#" target="_blank" rel="noopener" aria-disabled="true">Verify this record</a>
       <dl id="record-facts"></dl>
       <p class="note">The link opens typedstandards.org's verifier, which fetches the signed bundle from this site and checks it in your browser.</p>
+      <div class="enclave-run" id="enclave-run" hidden>
+        <h3>The same question, signed inside a Tinfoil Container</h3>
+        <dl id="enclave-facts-run"></dl>
+        <a class="verify-2" id="enclave-verify" href="#" target="_blank" rel="noopener">Verify the enclave-signed record</a>
+        <p class="note">The container ran the whole chain in a hardware enclave and signed with a key it generated. That key is published in the container's attestation.</p>
+      </div>
     </div>
   </section>
 
@@ -404,6 +413,24 @@ footer { font-size: 13px; color: var(--muted); }
     $('status').textContent = `${frames.length} steps recorded · press Play to replay`;
   }
 
+  async function loadEnclaveRun() {
+    const latest = await fetch('enclave/runs/latest.json', { cache: 'no-store' }).then((r) => r.json());
+    const r = await fetch(`enclave/runs/${latest.name}/replay.json`, { cache: 'no-store' }).then((x) => x.json());
+    const dl = $('enclave-facts-run');
+    const add = (k, v, href) => {
+      const dt = document.createElement('dt'); dt.textContent = k;
+      const dd = document.createElement('dd');
+      if (href) { const l = document.createElement('a'); l.href = href; l.textContent = v; l.target = '_blank'; l.rel = 'noopener'; dd.appendChild(l); } else dd.textContent = v;
+      dl.append(dt, dd);
+    };
+    add('Config release', `${r.container.configRepo} ${r.container.releaseTag}`, `https://github.com/${r.container.configRepo}/releases/tag/${r.container.releaseTag}`);
+    add('Signer', r.signer);
+    add('Key binding', r.container.keyBinding);
+    add('Attestation', `enclave/runs/${r.name}/container-attestation.json`, `enclave/runs/${r.name}/container-attestation.json`);
+    $('enclave-verify').href = r.verifyLink;
+    $('enclave-run').hidden = false;
+  }
+
   // Live mode: only when this page is served by npm run serve on this machine.
   async function detectLive() {
     if (!['localhost', '127.0.0.1'].includes(location.hostname)) return false;
@@ -485,6 +512,7 @@ footer { font-size: 13px; color: var(--muted); }
       $('ask-btn').addEventListener('click', () => { const q = $('ask-input').value.trim(); if (q) askLive(q).catch((err) => { $('status').textContent = String(err); $('ask-btn').disabled = false; }); });
       $('ask-input').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') $('ask-btn').click(); });
     }
+    loadEnclaveRun().catch(() => {});
     try { await loadReplay(); } catch (err) {
       $('question').textContent = 'No recorded run is published yet.';
       $('status').textContent = String(err.message || err);

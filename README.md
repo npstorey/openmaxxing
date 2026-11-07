@@ -4,7 +4,7 @@ One question goes in. An analysis of open data comes out as a signed record that
 
 It is a worked example of [Civic AI Tools](https://github.com/npstorey/civic-ai-tools): one local command, a demo page, and a public record host on GitHub Pages.
 
-**The recorded run:** "What were the five most common 311 complaint types in New York City in October 2026, and how many of each?" [Verify the signed record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-192101.bundle.json) · [Watch it replay](https://openmaxxing.typedstandards.org/) · [`records/run-20261107-192101.signed.json`](records/run-20261107-192101.signed.json). An earlier record asks the same of Chicago's portal: [verify it](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-185729.bundle.json).
+**The recorded run:** "What were the five most common 311 complaint types in New York City in October 2026, and how many of each?" [Verify the signed record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-192101.bundle.json) · [Watch it replay](https://openmaxxing.typedstandards.org/) · [`records/run-20261107-192101.signed.json`](records/run-20261107-192101.signed.json). **The same question, run and signed inside a Tinfoil Container:** [verify the enclave-signed record](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fenclave%2Fbundles%2Frun-20261107-195452.bundle.json) ([below](#the-chain-inside-a-tinfoil-container)). An earlier record asks the same of Chicago's portal: [verify it](https://typedstandards.org/verify?url=https%3A%2F%2Fopenmaxxing.typedstandards.org%2Fbundles%2Frun-20261107-185729.bundle.json).
 
 ## The eight layers
 
@@ -33,6 +33,16 @@ The diagram is [`docs/dataflow.bpmn`](docs/dataflow.bpmn), BPMN 2.0. The demo pa
 4. When the model calls a tool, the source router resolves the called name (`resolveCalledName`) and `socrata-mcp-server` queries the portal. The rows go back to the model.
 5. When the model answers, the harness derives the record's fields from the trace, and the Typed Standards CLI signs the record and checks it.
 6. A push publishes it: the workflow builds, verifies and deploys the site. Anyone can verify the record.
+
+## The chain inside a Tinfoil Container
+
+The same chain also runs inside a [Tinfoil Container](https://docs.tinfoil.sh/containers/overview.md), and the enclave signs the record with a key it generated itself.
+
+- **The code it runs.** [`src/enclave.mjs`](src/enclave.mjs), built from this repository's public source by [`build-image.yml`](.github/workflows/build-image.yml) into `ghcr.io/npstorey/openmaxxing@sha256:ac9a1dd0c451c5f5f1dc8318e70accb000af635da84511e72792f6b9ea1c5450`.
+- **The measured config.** [`npstorey/openmaxxing-enclave`](https://github.com/npstorey/openmaxxing-enclave) pins that image by digest, release `v0.0.1`. Its source here is [`enclave/tinfoil-config.yml`](enclave/tinfoil-config.yml). Egress is an allowlist of three hosts: `atc.tinfoil.sh`, `inference.tinfoil.sh` and `data.cityofnewyork.us`.
+- **The signing key.** `attested-keys: record-signing` (Ed25519) is generated inside the enclave on each deploy and never leaves it. Its public key is published in the enclave's attestation (`crypto_material`, format `https://tinfoil.sh/key/spki/v1`).
+- **The client.** `op run --env-file=op.env -- npm run ask:enclave -- "<question>"` verifies the container's enclave with Tinfoil's SecureClient before it sends anything. It then calls `/ask` with a bearer token, so only the operator can spend the inference credits. It runs `tinfoil attestation verify -j` and checks that the record's signing key is the attested key: the recorded run printed `key binding: ok`.
+- **Where the records live.** host-core 0.1.3 serves one key per registry, so records signed in the enclave have their own host at [`/enclave`](https://openmaxxing.typedstandards.org/enclave/records.json). Each run also serves the container's attestation (`container-attestation.json`) and the SecureClient's verification document (`container-verification.json`) beside the record, under [`docs/enclave/runs/`](docs/enclave/runs/).
 
 ## Prerequisites
 
@@ -96,11 +106,20 @@ Public mode, on the Pages site, replays one real signed run step by step and hol
 | The model router's enclave ran its published code | Tinfoil's statement, at run time | The SDK checked the AMD SEV-SNP attestation, the Sigstore-signed release of `tinfoilsh/confidential-model-router` and their measurements before sending anything; the document reads `securityVerified: true` with all five steps passed. A later reader cannot rerun that check: Tinfoil keeps the evidence in transparency logs but "does not provide a supported tool for querying these records and reconstructing the verification" ([In-band vs. out-of-band verification](https://docs.tinfoil.sh/verification/verification-in-tinfoil.md)). The record shows that the producer captured this document at run time. |
 | The model enclave ran `gpt-oss-120b` | Tinfoil's statement | The SDK verifies only the router. The router verifies each model enclave before forwarding, and the repository trusted for each model is compiled into the router's measured code (Tinfoil's [Chaining enclaves](https://docs.tinfoil.sh/verification/verification-in-tinfoil.md)). The verification document names the router, not the model enclave. |
 | Freshness of the attestation | Not covered | The JavaScript verifier does not implement the freshness witness or revocation checks, and `verifiedAt` is the local clock, not an attested time ([JavaScript SDK](https://docs.tinfoil.sh/sdk/javascript-sdk.md)). The record names `releaseDigest`, so a reader can compare it with the release they expect. |
-| The program that built the record | Asserted | The record names each package and version. Nothing attests the machine that ran `npm run ask`. |
+| The program that built the record, run locally | Asserted | The record names each package and version. Nothing attests the machine that ran `npm run ask`. |
+| The enclave record was signed inside the container | Attested, against the attestation | The record's `signature.publicKey` is the `record-signing` key in the container's attestation. `container-attestation.json` is served beside the record, and its `crypto_material` entry holds the same SPKI bytes in hex. A new key is made on every deploy, so the binding names one deploy. The attestation file is the producer's capture; `tinfoil attestation verify` re-checks it while that deploy runs. |
+| The container runs the published config and image | Tinfoil's statement, at run time | SecureClient and the Tinfoil CLI matched the enclave's measurement to release `v0.0.1` of `npstorey/openmaxxing-enclave`, which pins the image by digest. Whether that image is byte-for-byte what `build-image.yml` builds from this source is not checked; the build was not made reproducible. |
+| The container's secrets | Not covered | The Tinfoil key, the Socrata token and the ask token are Tinfoil organization secrets. Tinfoil's [private secrets](https://docs.tinfoil.sh/containers/private-secrets.md), which Tinfoil never sees, need a keyserver and were not used. |
 | Capture method and producer profile | Asserted (#15) | `chat-flow-stream` under `ai-assisted-analysis/openmaxxing-v1`: signed labels, checked by nothing. |
 | When the record existed | Not covered | #7 does not apply: no RFC 3161 token was requested. `createdAt` is the signer's claim. |
 | Inclusion in a transparency log | Not covered | #8 does not apply. |
 | That the answer is correct | Not covered | A signature shows the bytes are unchanged since signing, not that they are true. |
+
+## Next
+
+- **The whole civicaitools.org website in a Tinfoil Container.** Its self-hosted stack is the app, Postgres, S3-style storage and a scheduler, so it needs a second container for the database and storage on the egress list.
+- **A record bound to a fresh attestation.** With `attestation: true`, the container can request a fresh report whose nonce is the record's envelope hash. That would tie each record to the enclave at the moment of signing.
+- **Private secrets.** Release the container's secrets from a keyserver the operator runs, so Tinfoil never sees them.
 
 ## Prior work
 
@@ -129,6 +148,7 @@ Written on 2026-11-07:
 - `src/ask.mjs`, `src/verify.mjs`, `src/serve.mjs`: the three commands.
 - `docs/dataflow.bpmn` and `docs/index.html`: the diagram and the demo page, with replay and live modes.
 - `.github/workflows/publish.yml`, `host.json`, `host-policy.json`, `display.mjs`: this repository as its own record host.
+- `src/enclave.mjs`, `Dockerfile`, `build-image.yml`, `enclave/`, `src/ask-enclave.mjs`: the chain in a Tinfoil Container, its config, and the client that verifies it and files its records.
 
 ## Layout
 

@@ -126,6 +126,8 @@ writeFileSync(path.join(runDir, 'replay.json'), `${JSON.stringify({
   events: out.events,
 }, null, 2)}\n`);
 
+writeFileSync(path.join(ROOT, 'docs', 'enclave', 'runs', 'latest.json'), `${JSON.stringify({ name }, null, 2)}\n`);
+
 console.log(`\n${out.run.answer.trim()}\n`);
 console.log(`signed in the enclave by ${signed.package.signer.identifier}`);
 console.log(`key binding: ${keyBinding}`);
