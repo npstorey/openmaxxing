@@ -5,15 +5,15 @@
   "inferenceHost": "inference.tinfoil.sh",
   "maxIterations": 8,
   "maxToolResultChars": 12000,
-  "origin": "https://openmaxxing.github.io/openmaxxing",
-  "repository": "https://github.com/openmaxxing/openmaxxing",
-  "extensionKey": "io.github.openmaxxing.chain",
+  "origin": "https://openmaxxing.typedstandards.org",
+  "repository": "https://github.com/npstorey/openmaxxing",
+  "extensionKey": "org.typedstandards.openmaxxing.chain",
   "producerProfile": "ai-assisted-analysis/openmaxxing-v1",
   "captureMethod": "chat-flow-stream",
   "platformAgent": {
     "id": "openmaxxing",
     "title": "Openmaxxing",
-    "url": "https://github.com/openmaxxing/openmaxxing"
+    "url": "https://github.com/npstorey/openmaxxing"
   },
   "trace": {
     "serviceName": "openmaxxing",
@@ -21,7 +21,7 @@
     "scopeVersion": "0.1.0",
     "semconvVersion": "1.30.0"
   },
-  "environmentHost": "openmaxxing.github.io",
+  "environmentHost": "openmaxxing.typedstandards.org",
   "signer": {
     "bindingTier": "pseudonymous",
     "displayName": "openmaxxing"

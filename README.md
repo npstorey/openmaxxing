@@ -45,7 +45,7 @@ The diagram is [`docs/dataflow.bpmn`](docs/dataflow.bpmn), BPMN 2.0. The demo pa
 ## From clone to verified record
 
 ```sh
-git clone https://github.com/openmaxxing/openmaxxing && cd openmaxxing && npm ci
+git clone https://github.com/npstorey/openmaxxing && cd openmaxxing && npm ci
 op run --env-file=op.env -- npm run ask -- "How many burglaries were reported in Chicago in October 2026?"
 npm run verify
 ```

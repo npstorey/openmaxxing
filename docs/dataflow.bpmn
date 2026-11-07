@@ -5,7 +5,7 @@
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
                   id="openmaxxing-dataflow"
-                  targetNamespace="https://github.com/openmaxxing/openmaxxing">
+                  targetNamespace="https://github.com/npstorey/openmaxxing">
   <bpmn:collaboration id="collaboration">
     <bpmn:participant id="pool" name="One run of npm run ask" processRef="run" />
   </bpmn:collaboration>

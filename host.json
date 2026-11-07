@@ -1,9 +1,9 @@
 {
   "$comment": "The host manifest. typedstandards-host build writes the served tree from it; every path is relative to this file. npm run ask appends one entry per record.",
-  "origin": "https://openmaxxing.github.io/openmaxxing",
+  "origin": "https://openmaxxing.typedstandards.org",
   "visibility": "public",
   "registry": {
-    "$comment": "Openmaxxing's own statement about the signing key of the records this host serves. The key is a pseudonymous did:key whose seed is kept in the author's secret store. This registry is not a Typed Standards record and not an endorsement by the Typed Standards specification or by typedstandards.org."
+    "$comment": "Openmaxxing's own statement about the signing key of the records this host serves. The key is a pseudonymous did:key whose seed is kept in the author's secret store. This registry is not a Typed Standards record, and not an endorsement by the Typed Standards specification or by typedstandards.org, although this host is a subdomain of it."
   },
   "index": {
     "$comment": "The records this host serves: one per run of npm run ask that was committed."
